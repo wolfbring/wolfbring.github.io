@@ -5,47 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Wolf's Domain</title>
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-XXXXXXXXXX');
-    </script>
-</head>
+    </head>
 <body>
     <div id="login-page" class="login-container">
         <div class="stars"></div>
         <div class="moon"></div>
-        
         <div class="login-box">
             <div class="wolf-emoji">🐺</div>
             <h2>Wolf's Territory</h2>
             <p class="subtitle">Enter the Wild</p>
-            
             <div class="input-group">
                 <input type="password" id="password-input" placeholder="Enter your password" />
                 <span class="input-icon">🔐</span>
             </div>
-            
             <button id="login-btn" onclick="verifyPassword()" class="login-btn">
                 <span class="btn-text">Enter Territory</span>
                 <span class="btn-icon">→</span>
             </button>
-            
             <p id="error-message" class="error"></p>
         </div>
     </div>
 
-    <div id="content" style="display:none;">
-        <h1>Welcome to Wolf's Domain</h1>
-        <p>第一週簡報：  </p>
-        <p>第一週摘要：  </p>
-        
-        <p>You have successfully entered the territory! 🐺</p>
-        <button onclick="logout()">Logout</button>
+    <div id="content" class="main-content" style="display:none;">
+        <header class="content-header">
+            <h1>Welcome to Wolf's Domain</h1>
+            <div class="status-badge">Week 01 - Active</div>
+        </header>
+
+        <div class="update-section">
+            <div class="update-card">
+                <h3 class="update-title">📅 本週主題：<span id="weekly-topic">深入狼穴：基礎架構實作</span></h3>
+                
+                <div class="item-box">
+                    <span class="label">第一週簡報：</span>
+                    <a href="#" class="link-btn">點此查看簡報內容</a>
+                </div>
+
+                <div class="item-box">
+                    <span class="label">第一週摘要：</span>
+                    <p class="summary-text">本週我們完成了基礎登入邏輯開發，並優化了內容呈現介面，確保未來更新更便利。</p>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 
     <script src="script.js"></script>
