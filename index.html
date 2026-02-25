@@ -4,40 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <title>Wolf's Domain | Login</title>
+    <title>Wolf's Domain</title>
 </head>
 <body>
-    <div id="login-page" class="login-container">
+    <div id="login-page" class="login-full-screen">
         <div class="login-box">
             <div class="wolf-emoji">🐺</div>
             <h2>Wolf's Territory</h2>
             <p class="subtitle">Please enter the pack password</p>
-            
             <div class="input-group">
                 <input type="password" id="password-input" placeholder="Password" />
             </div>
-            
             <button id="login-btn" onclick="verifyPassword()" class="login-btn">
                 Enter Territory
             </button>
-            
             <p id="error-message" class="error"></p>
         </div>
     </div>
 
-    <div id="content" class="main-content" style="display:none;">
+    <div id="content" class="main-content-area" style="display:none;">
         <header class="content-header">
             <h1>Welcome to Wolf's Domain</h1>
         </header>
 
-        <div class="update-section">
+        <div class="week-section">
             <div class="update-card">
-                <h3 class="update-title">📁 第一週主題：<span>課程介紹</span></h3>
+                <h3 class="update-title">📁 第一週主題：課程介紹</h3>
                 <div class="item-box">
-                    <strong>簡報：</strong> <a href="#" class="link-text">點此查看</a>
+                    <strong>簡報：</strong> <a href="#" class="link-text">點此查看簡報</a>
                 </div>
                 <div class="item-box">
-                    <strong>摘要：</strong> <p class="summary-text">介面優化完成。</p>
+                    <strong>摘要：</strong> 
+                    <p class="summary-text">本週我們完成了基礎介面架構設計。</p>
+                </div>
+            </div>
+        </div>
+
+        <hr class="week-divider">
+
+        <div class="week-section">
+            <div class="update-card">
+                <h3 class="update-title">📁 第二週主題：介紹未來學</h3>
+                <div class="item-box">
+                    <strong>簡報：</strong> <a href="#" class="link-text">點此查看簡報</a>
+                </div>
+                <div class="item-box">
+                    <strong>摘要：</strong> 
+                    <p class="summary-text">本週深入探討未來趨勢與預測方法。</p>
                 </div>
             </div>
         </div>
