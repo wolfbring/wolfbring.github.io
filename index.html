@@ -5,23 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Wolf's Domain</title>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
 </head>
 <body>
-    <!-- 狼主題登入頁面 -->
     <div id="login-page" class="login-container">
-        <!-- 背景動畫層 -->
         <div class="stars"></div>
         <div class="moon"></div>
-        <div class="clouds"></div>
         
-        <!-- 狼群剪影 -->
-        <div class="wolves-container">
-            <div class="wolf wolf-left"></div>
-            <div class="wolf wolf-center"></div>
-            <div class="wolf wolf-right"></div>
-        </div>
-
-        <!-- 登入框 -->
         <div class="login-box">
             <div class="wolf-emoji">🐺</div>
             <h2>Wolf's Territory</h2>
@@ -32,27 +30,17 @@
                 <span class="input-icon">🔐</span>
             </div>
             
-            <button onclick="verifyPassword()" class="login-btn">
+            <button id="login-btn" onclick="verifyPassword()" class="login-btn">
                 <span class="btn-text">Enter Territory</span>
                 <span class="btn-icon">→</span>
             </button>
             
             <p id="error-message" class="error"></p>
         </div>
-
-        <!-- 底部裝飾 -->
-        <div class="bottom-decor">
-            <span class="paw">🐾</span>
-            <span class="paw">🐾</span>
-            <span class="paw">🐾</span>
-        </div>
     </div>
 
-    <!-- 網站內容 -->
     <div id="content" style="display:none;">
         <h1>Welcome to Wolf's Domain</h1>
-        <h1>第一週簡報：  </h1>
-        <h1>第一週摘要：  </h1>
         <p>You have successfully entered the territory! 🐺</p>
         <button onclick="logout()">Logout</button>
     </div>
