@@ -1,93 +1,71 @@
-/* 基礎設定 */
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* 內容區域外層 */
+.main-content {
+    max-width: 650px;
+    margin: 40px auto;
+    padding: 0 20px;
 }
 
-/* 淺藍色背景與居中容器 */
-.login-container {
-    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); /* 淺藍漸層 */
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* 每一週區塊的間距 */
+.update-section {
+    position: relative;
+    margin-bottom: 40px;
 }
 
-/* 登入框樣式 */
-.login-box {
-    background: white;
-    padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    text-align: center;
+/* 自動在區塊間加入分隔線 (除了最後一個區塊) */
+.update-section:not(:last-of-type)::after {
+    content: "";
+    display: block;
     width: 100%;
-    max-width: 350px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+    margin-top: 40px;
 }
 
-.wolf-emoji {
-    font-size: 48px;
-    margin-bottom: 10px;
+/* 卡片與文字樣式 */
+.update-card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-h2 {
-    color: #0369a1; /* 深藍色標題 */
-    margin: 0 0 10px 0;
-}
-
-.subtitle {
-    color: #64748b;
-    font-size: 14px;
-    margin-bottom: 30px;
-}
-
-/* 輸入框居中優化 */
-.input-group {
+.update-title {
+    color: #0369a1;
+    margin-top: 0;
+    font-size: 1.25rem;
+    border-bottom: 2px solid #f0f9ff;
+    padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
-#password-input {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    outline: none;
-    box-sizing: border-box; /* 確保 padding 不會撐破寬度 */
-    transition: border-color 0.3s;
+.item-box {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    color: #475569;
 }
 
-#password-input:focus {
-    border-color: #38bdf8;
+.link-text {
+    color: #0ea5e9;
+    text-decoration: none;
+    font-weight: 500;
 }
 
-/* 按鈕樣式 */
-.login-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #0ea5e9;
+.link-text:hover {
+    text-decoration: underline;
+}
+
+.summary-text {
+    margin-top: 5px;
+}
+
+/* 登出按鈕 */
+.logout-btn {
+    display: block;
+    margin: 50px auto;
+    padding: 10px 20px;
+    background: #94a3b8;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s;
-}
-
-.login-btn:hover {
-    background-color: #0284c7;
-}
-
-.error {
-    color: #ef4444;
-    font-size: 13px;
-    margin-top: 15px;
-    min-height: 20px;
-}
-
-/* 內容區塊簡易樣式 */
-.main-content {
-    padding: 40px;
-    max-width: 600px;
-    margin: 0 auto;
 }
