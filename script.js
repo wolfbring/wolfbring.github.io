@@ -12,7 +12,7 @@ function verifyPassword() {
     const content = document.getElementById('content');
 
     // 這裡設定你的進入密碼 (假設為 "wolf123")
-    const correctPassword = "123456";
+    const correctPassword = "1234";
 
     if (passwordInput.value === correctPassword) {
         // 驗證成功：隱藏登入頁，顯示內容
