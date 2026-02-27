@@ -3,67 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Wolf's Futures Studies</title>
+    <link rel="stylesheet" href="../styles.css">
+    <title>Week Details | Wolf's Futures Studies</title>
 </head>
-<body>
+<body class="subpage-body">
 
-            <div class="wolf-emoji">🐺</div>
-            <h2>Wolf's Territory</h2>
-        </div>
-    </div>
+    <div class="main-content-area">
+        <nav class="subpage-nav">
+            <a href="../index.html" class="back-home-btn">🏠 返回主目錄</a>
+            <button onclick="goToHomeAndLogout()" class="subpage-logout-btn">Logout</button>
+        </nav>
 
-    <div id="content" class="main-content-area" style="display:none;">
         <header class="content-header">
-            <h1>Welcome to Wolf's Futures Studies</h1>
+            <h1>各週主題詳情</h1>
         </header>
 
-        <div class="week-section">
-            <div class="update-card">
-                <h3 class="update-title">📁 第一週主題：課程介紹</h3>
-                <div class="item-box">
-                    <strong>簡報：</strong> <a href="#" class="link-text">點此查看簡報</a>
-                </div>
-                <div class="item-box">
-                    <strong>摘要：</strong> 
-                    <p class="summary-text">本週我們完成了基礎介面架構設計。</p>
-                </div>
-            </div>
-        </div>
-
-        <hr class="week-divider">
-
-        <div class="week-section">
-            <div class="update-card">
-                <h3 class="update-title">📁 第二週主題：介紹未來學</h3>
-                <div class="item-box">
-                    <strong>簡報：</strong> <a href="#" class="link-text">點此查看簡報</a>
-                </div>
-                <div class="item-box">
-                    <strong>摘要：</strong> 
-                    <p class="summary-text">本週深入探討未來趨勢與預測方法。</p>
+        <div class="details-container">
+            <div class="week-section">
+                <div class="update-card">
+                    <h3 class="update-title">📁 第一週：課程介紹</h3>
+                    <div class="item-box">
+                        <strong>連結：</strong> <a href="#" class="link-text">查看簡報</a>
+                    </div>
+                    <div class="item-box">
+                        <strong>摘要：</strong> <p class="summary-text">課程架構說明與環境準備。</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-         <hr class="week-divider">
-
-        <div class="week-section">
-            <div class="update-card">
-                <h3 class="update-title">📁 第三週主題：介紹未來學</h3>
-                <div class="item-box">
-                    <strong>簡報：</strong> <a href="#" class="link-text">點此查看簡報</a>
-                </div>
-                <div class="item-box">
-                    <strong>摘要：</strong> 
-                    <p class="summary-text">本週深入探討未來趨勢與預測方法。</p>
-                </div>
+            <hr class="week-divider">
+            
             </div>
-        </div>
 
-        <button onclick="logout()" class="logout-btn">Logout</button>
+        <footer class="subpage-footer">
+            <button onclick="window.location.href='../index.html'" class="footer-back-btn">Back to Index</button>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // 子頁面專用指令：跳轉回首頁並清除登入狀態
+        function goToHomeAndLogout() {
+            // 如果你有使用 localStorage 儲存登入狀態，可以在此清除
+            // localStorage.removeItem('isLoggedIn'); 
+            
+            // 跳轉回根目錄的 index.html
+            window.location.href = 'index.html';
+        }
+    </script>
 </body>
 </html>
