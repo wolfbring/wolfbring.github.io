@@ -2,81 +2,92 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>課堂點名 1–74 旋轉輪盤（含姓名）</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #020617;
+      background: linear-gradient(135deg, #020617 0%, #111827 100%);
       color: #f9fafb;
       min-height: 100vh;
       margin: 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 20px;
     }
 
     .app {
       display: flex;
-      gap: 24px;
-      padding: 24px 32px;
+      gap: 32px;
+      max-width: 1400px;
+      width: 100%;
     }
 
     h1 {
-      margin: 0 0 4px 0;
+      margin: 0 0 8px 0;
+      font-size: clamp(2rem, 5vw, 3rem);
     }
 
     .hint {
-      font-size: 14px;
-      opacity: 0.8;
-      margin-bottom: 12px;
-      text-align: left;
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 16px;
+      text-align: center;
+      line-height: 1.4;
     }
 
     .wheel-panel {
       display: flex;
       flex-direction: column;
       align-items: center;
+      flex: 1;
     }
 
     .wheel-container {
       position: relative;
-      width: 360px;
-      height: 360px;
-      margin-bottom: 16px;
+      width: 400px;
+      height: 400px;
+      margin-bottom: 20px;
     }
 
     .pointer {
       position: absolute;
-      top: -14px;
+      top: -18px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 14px solid transparent;
-      border-right: 14px solid transparent;
-      border-bottom: 22px solid #f97316;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-bottom: 28px solid #f97316;
       z-index: 10;
-      filter: drop-shadow(0 0 4px rgba(0,0,0,0.6));
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
     }
 
     .wheel {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #1e293b, #020617);
-      border: 6px solid #0f172a;
+      background: conic-gradient(from 0deg, #1e293b, #0f172a, #1e293b, #0f172a);
+      border: 8px solid #0f172a;
       position: relative;
       overflow: hidden;
-      transition: transform 4s cubic-bezier(0.17, 0.89, 0.24, 1.1);
+      transition: transform 4.5s cubic-bezier(0.23, 1, 0.32, 1);
       box-shadow:
-        0 0 0 4px #111827,
-        0 18px 35px rgba(0,0,0,0.6);
+        0 0 0 6px #111827,
+        inset 0 0 40px rgba(0,0,0,0.6),
+        0 25px 50px rgba(0,0,0,0.7);
     }
 
     .segment {
       position: absolute;
-      width: 50%;
-      height: 2px;
+      width: 52%;
+      height: 3px;
       top: 50%;
       left: 50%;
       transform-origin: 0% 50%;
@@ -84,121 +95,144 @@
 
     .segment-label {
       position: absolute;
-      right: -18px;
-      top: -10px;
-      width: 32px;
+      right: -20px;
+      top: -12px;
+      width: 36px;
       text-align: center;
-      font-size: 11px;
-      color: #e5e7eb;
+      font-size: clamp(10px, 1.8vw, 12px);
+      font-weight: 600;
+      color: #fefefe;
       transform-origin: 50% 50%;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
     .controls {
       display: flex;
-      gap: 8px;
-      margin-bottom: 4px;
+      gap: 12px;
+      margin-bottom: 8px;
     }
 
     button {
-      padding: 8px 18px;
+      padding: 12px 24px;
       border-radius: 999px;
       border: none;
-      background: #3b82f6;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
       color: #f9fafb;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+      transition: all 0.2s ease;
     }
 
     button:hover {
-      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
     }
 
     button:active {
-      background: #1d4ed8;
-      transform: translateY(1px);
+      transform: translateY(0);
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
     }
 
     button:disabled {
       background: #4b5563;
       cursor: default;
+      transform: none;
+      box-shadow: none;
     }
 
     .round {
-      font-size: 14px;
-      opacity: 0.85;
-      margin-bottom: 4px;
-      min-height: 18px;
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 8px;
+      min-height: 24px;
       text-align: center;
+      font-weight: 500;
     }
 
     .result {
-      min-height: 24px;
-      font-size: 18px;
-      margin-top: 2px;
+      min-height: 80px;
+      font-size: clamp(2.2rem, 8vw, 4.5rem);
+      font-weight: 800;
+      margin-top: 8px;
       text-align: center;
+      line-height: 1.1;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.8);
+      background: rgba(249, 250, 251, 0.1);
+      padding: 16px 24px;
+      border-radius: 16px;
+      border: 2px solid rgba(249, 250, 251, 0.2);
     }
 
     .names-panel {
-      width: 260px;
-      max-height: 480px;
+      width: 300px;
+      max-height: 520px;
       display: flex;
       flex-direction: column;
-      background: #020617;
-      border-radius: 12px;
-      border: 1px solid #1f2933;
-      box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+      background: rgba(17, 24, 39, 0.95);
+      border-radius: 20px;
+      border: 1px solid rgba(31, 41, 55, 0.8);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
       overflow: hidden;
+      backdrop-filter: blur(10px);
     }
 
     .names-header {
-      padding: 8px 12px;
-      border-bottom: 1px solid #1f2933;
-      font-size: 14px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+      font-size: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #0b1120;
-    }
-
-    .names-header span {
-      opacity: 0.9;
+      background: rgba(11, 17, 32, 0.9);
+      font-weight: 600;
     }
 
     .names-list {
       list-style: none;
       margin: 0;
-      padding: 4px 0;
+      padding: 8px 0;
       overflow-y: auto;
+      flex: 1;
     }
 
     .names-list li {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 10px;
-      font-size: 14px;
-      border-bottom: 1px solid rgba(15,23,42,0.7);
+      padding: 8px 16px;
+      font-size: 15px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.6);
       background: transparent;
-      transition: background 0.15s ease, color 0.15s ease;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .names-list li:hover {
+      background: rgba(59, 130, 246, 0.1);
     }
 
     .names-list li:nth-child(2n) {
-      background: rgba(15,23,42,0.7);
+      background: rgba(15, 23, 42, 0.4);
     }
 
     .names-list li .no {
-      opacity: 0.8;
-      width: 46px;
+      opacity: 0.85;
+      width: 50px;
+      font-weight: 700;
     }
 
     .names-list li .nm {
       flex: 1;
+      padding-left: 4px;
     }
 
     .names-list li.active {
-      background: #f59e0b;
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
       color: #111827;
-      font-weight: 600;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
     }
 
     .names-list li.active .no {
@@ -206,20 +240,23 @@
     }
 
     .names-footer {
-      padding: 4px 10px 6px 10px;
-      font-size: 12px;
-      opacity: 0.8;
+      padding: 8px 16px;
+      font-size: 13px;
+      opacity: 0.85;
       text-align: right;
-      background: #020617;
+      background: rgba(2, 6, 23, 0.9);
+      font-style: italic;
     }
 
-    @media (max-width: 880px) {
+    @media (max-width: 900px) {
       .app {
         flex-direction: column;
+        gap: 24px;
         align-items: center;
       }
       .names-panel {
-        width: 320px;
+        width: 100%;
+        max-width: 360px;
       }
     }
   </style>
@@ -227,10 +264,10 @@
 <body>
   <div class="app">
     <div class="wheel-panel">
-      <h1>課堂點名數字輪盤</h1>
+      <h1>🎯 課堂點名輪盤</h1>
       <div class="hint">
-        點「旋轉」抽出座號，右側同步顯示姓名。<br>
-        名單已設定為 1–74 號。
+        點擊「旋轉」按鈕隨機抽出同學<br>
+        <small>右側同步高亮顯示，支援最近 5 次不重複</small>
       </div>
 
       <div class="wheel-container">
@@ -239,17 +276,17 @@
       </div>
 
       <div class="controls">
-        <button id="spinBtn">旋轉</button>
-        <button id="resetBtn">重置</button>
+        <button id="spinBtn">🎲 旋轉抽取</button>
+        <button id="resetBtn">🔄 重置</button>
       </div>
       <div class="round" id="roundInfo"></div>
-      <div class="result" id="result"></div>
+      <div class="result" id="result">準備抽取...</div>
     </div>
 
     <div class="names-panel">
       <div class="names-header">
-        <span>座號與姓名</span>
-        <span id="countInfo"></span>
+        <span>📋 1–74 號同學名單</span>
+        <span id="countInfo">74 人</span>
       </div>
       <ul class="names-list" id="namesList"></ul>
       <div class="names-footer" id="namesFooter"></div>
@@ -257,100 +294,34 @@
   </div>
 
   <script>
-    // 1. 名單（1–74）
+    // 1–74 號名單（已整合）
     const students = [
-      "詹○翔",
-      "陳○楦",
-      "吳○凱",
-      "莊○閎",
-      "謝○窈",
-      "黃○誼",
-      "林○儀",
-      "李○璇",
-      "蔡○希",
-      "張○綸",
-      "陳○恩",
-      "羅○雁",
-      "杜○倢",
-      "吳○恩",
-      "陳○宸",
-      "簡○羚",
-      "林○伃",
-      "田○妃",
-      "陳○原",
-      "陳○甯",
-      "林○嵐",
-      "蘇○峯",
-      "徐○玉",
-      "陳○諺",
-      "李○昇",
-      "應○林",
-      "陳○妤",
-      "陳○臻",
-      "陳○卉",
-      "劉○真",
-      "洪○倫",
-      "沈○浥",
-      "彭○廷",
-      "程○涵",
-      "陳○均",
-      "劉○中",
-      "王○彥",
-      "蘇○宇",
-      "黃○承",
-      "林○珊",
-      "程○翔",
-      "吳○庭",
-      "張○晴",
-      "莊○萱",
-      "張○盈",
-      "鄭○暐",
-      "孫○志",
-      "徐○哿",
-      "洪○軒",
-      "林○恩",
-      "朱○豪",
-      "朱○芸",
-      "賴○涵",
-      "許○珮",
-      "簡○心",
-      "許○欣",
-      "林○羲",
-      "潘○君",
-      "吳○珊",
-      "黃○杰",
-      "廖○晴",
-      "陳○瑋",
-      "杜○倢",
-      "林○萱",
-      "王○昕",
-      "王○學",
-      "張○杰",
-      "韓○文",
-      "程○宥",
-      "蔡○安",
-      "鄭○涵",
-      "徐○勝",
-      "林○紘",
-      "盧○霖"
+      "詹○翔","陳○楦","吳○凱","莊○閎","謝○窈","黃○誼","林○儀","李○璇","蔡○希","張○綸",
+      "陳○恩","羅○雁","杜○倢","吳○恩","陳○宸","簡○羚","林○伃","田○妃","陳○原","陳○甯",
+      "林○嵐","蘇○峯","徐○玉","陳○諺","李○昇","應○林","陳○妤","陳○臻","陳○卉","劉○真",
+      "洪○倫","沈○浥","彭○廷","程○涵","陳○均","劉○中","王○彥","蘇○宇","黃○承","林○珊",
+      "程○翔","吳○庭","張○晴","莊○萱","張○盈","鄭○暐","孫○志","徐○哿","洪○軒","林○恩",
+      "朱○豪","朱○芸","賴○涵","許○珮","簡○心","許○欣","林○羲","潘○君","吳○珊","黃○杰",
+      "廖○晴","陳○瑋","杜○倢","林○萱","王○昕","王○學","張○杰","韓○文","程○宥","蔡○安",
+      "鄭○涵","徐○勝","林○紘","盧○霖"
     ];
 
     const COUNT = students.length;
     const RECENT_LIMIT = 5;
 
+    // DOM 元素
     const wheel = document.getElementById('wheel');
     const spinBtn = document.getElementById('spinBtn');
     const resetBtn = document.getElementById('resetBtn');
     const result = document.getElementById('result');
     const roundInfo = document.getElementById('roundInfo');
-
     const namesList = document.getElementById('namesList');
     const countInfo = document.getElementById('countInfo');
     const namesFooter = document.getElementById('namesFooter');
 
     const anglePer = 360 / COUNT;
 
-    // 2. 產生圓周數字
+    // 產生輪盤數字（74格時字體更小但清晰）
     for (let i = 0; i < COUNT; i++) {
       const segment = document.createElement('div');
       segment.className = 'segment';
@@ -359,35 +330,116 @@
       const label = document.createElement('div');
       label.className = 'segment-label';
       label.textContent = i + 1;
-
-      const hue = (i * 5) % 360;
-      label.style.color = `hsl(${hue}, 80%, 70%)`;
+      
+      const hue = (i * 4.8) % 360; // 74格顏色漸變
+      label.style.color = `hsl(${hue}, 85%, 75%)`;
 
       segment.appendChild(label);
       wheel.appendChild(segment);
     }
 
-    // 3. 右側名單
-    countInfo.textContent = `共 ${COUNT} 人`;
+    // 產生右側名單
+    countInfo.textContent = `${COUNT} 人`;
     students.forEach((name, index) => {
       const li = document.createElement('li');
       li.dataset.no = index + 1;
 
       const noSpan = document.createElement('span');
       noSpan.className = 'no';
-      noSpan.textContent = String(index + 1).padStart(2, '0');
+      noSpan.textContent = String(index + 1).padStart(2, '0') + '號';
 
       const nameSpan = document.createElement('span');
       nameSpan.className = 'nm';
-      nameSpan.textContent = name || '(未填姓名)';
+      nameSpan.textContent = name;
 
       li.appendChild(noSpan);
       li.appendChild(nameSpan);
       namesList.appendChild(li);
     });
-    namesFooter.textContent = '提示：點名前先確認座號與姓名對應。';
+    namesFooter.textContent = '最近5次不重複抽取';
 
     let currentRotation = 0;
     let isSpinning = false;
     let round = 0;
-    const recent =
+    const recent = [];
+
+    function drawNonRepeating() {
+      let n;
+      let tries = 0;
+      do {
+        n = Math.floor(Math.random() * COUNT) + 1;
+        tries++;
+        if (tries > 50) break;
+      } while (recent.includes(n));
+
+      recent.push(n);
+      if (recent.length > RECENT_LIMIT) {
+        recent.shift();
+      }
+      return n;
+    }
+
+    function highlightName(no) {
+      namesList.querySelectorAll('li').forEach(li => {
+        li.classList.toggle('active', Number(li.dataset.no) === no);
+      });
+    }
+
+    function spin() {
+      if (isSpinning) return;
+      
+      isSpinning = true;
+      spinBtn.disabled = true;
+      spinBtn.textContent = '轉動中…';
+      result.textContent = '🎲 轉動中…';
+      result.style.background = 'rgba(249, 250, 251, 0.05)';
+
+      const chosen = drawNonRepeating();
+      const chosenName = students[chosen - 1];
+
+      const extraTurns = 5 + Math.floor(Math.random() * 6);
+      const targetDeg = extraTurns * 360 + (90 - anglePer * (chosen - 1));
+
+      currentRotation = targetDeg;
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+      setTimeout(() => {
+        isSpinning = false;
+        spinBtn.disabled = false;
+        spinBtn.textContent = '🎲 旋轉抽取';
+        round++;
+        roundInfo.textContent = `第 ${round} 輪`;
+        result.innerHTML = `<strong>${chosen}號</strong><br>${chosenName}`;
+        result.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2))';
+        highlightName(chosen);
+        
+        // 自動滾動到被選中的人
+        const activeLi = namesList.querySelector(`li[data-no="${chosen}"]`);
+        if (activeLi) {
+          activeLi.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 4600);
+    }
+
+    function resetAll() {
+      if (isSpinning) return;
+      currentRotation = 0;
+      wheel.style.transform = 'rotate(0deg)';
+      round = 0;
+      recent.length = 0;
+      roundInfo.textContent = '';
+      result.innerHTML = '準備抽取...';
+      result.style.background = 'rgba(249, 250, 251, 0.1)';
+      highlightName(-1);
+      spinBtn.textContent = '🎲 旋轉抽取';
+    }
+
+    // 事件綁定
+    spinBtn.addEventListener('click', spin);
+    resetBtn.addEventListener('click', resetAll);
+    
+    // 測試：頁面載入完成後顯示就緒
+    console.log('輪盤載入完成，共', COUNT, '人');
+  </script>
+</body>
+</html>
