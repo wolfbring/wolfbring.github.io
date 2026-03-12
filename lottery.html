@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>課堂點名 1–74 旋轉輪盤（含姓名）</title>
+  <title>課堂點名 1–74 旋轉輪盤（金銀交錯版）</title>
   <style>
     * {
       box-sizing: border-box;
@@ -73,7 +73,17 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: conic-gradient(from 0deg, #1e293b, #0f172a, #1e293b, #0f172a);
+      /* 金銀交錯背景：每45度輪流金/銀 */
+      background: conic-gradient(
+        #fbbf24 0deg 45deg,    /* 金 */
+        #e5e7eb 45deg 90deg,   /* 銀 */
+        #fbbf24 90deg 135deg,
+        #e5e7eb 135deg 180deg,
+        #fbbf24 180deg 225deg,
+        #e5e7eb 225deg 270deg,
+        #fbbf24 270deg 315deg,
+        #e5e7eb 315deg 360deg
+      );
       border: 8px solid #0f172a;
       position: relative;
       overflow: hidden;
@@ -439,7 +449,7 @@
     resetBtn.addEventListener('click', resetAll);
     
     // 測試：頁面載入完成後顯示就緒
-    console.log('輪盤載入完成，共', COUNT, '人');
+    console.log('金銀輪盤載入完成，共', COUNT, '人');
   </script>
 </body>
 </html>
