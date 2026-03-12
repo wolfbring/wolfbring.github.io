@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>1–60 旋轉數字輪盤</title>
+  <title>課堂點名 1–60 旋轉數字輪盤</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -16,23 +16,23 @@
     }
 
     h1 {
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     .hint {
       font-size: 14px;
       opacity: 0.8;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+      text-align: center;
     }
 
     .wheel-container {
       position: relative;
       width: 360px;
       height: 360px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
-    /* 上方固定指標 */
     .pointer {
       position: absolute;
       top: -14px;
@@ -64,7 +64,7 @@
     .segment {
       position: absolute;
       width: 50%;
-      height: 2px; /* 先用細線標示圓周，數字再往外推 */
+      height: 2px;
       top: 50%;
       left: 50%;
       transform-origin: 0% 50%;
@@ -84,7 +84,7 @@
     .controls {
       display: flex;
       gap: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     button {
@@ -111,17 +111,25 @@
       cursor: default;
     }
 
+    .round {
+      font-size: 14px;
+      opacity: 0.85;
+      margin-bottom: 4px;
+      min-height: 18px;
+      text-align: center;
+    }
+
     .result {
       min-height: 24px;
       font-size: 18px;
-      margin-top: 4px;
+      margin-top: 2px;
       text-align: center;
     }
   </style>
 </head>
 <body>
-  <h1>1–60 旋轉數字輪盤</h1>
-  <div class="hint">點擊「旋轉」後，等輪盤停下來，看指標上方的數字。</div>
+  <h1>課堂點名數字輪盤</h1>
+  <div class="hint">點「旋轉」抽出座號，可改 COUNT 成實際人數。</div>
 
   <div class="wheel-container">
     <div class="pointer"></div>
@@ -132,76 +140,9 @@
     <button id="spinBtn">旋轉</button>
     <button id="resetBtn">重置角度</button>
   </div>
+  <div class="round" id="roundInfo"></div>
   <div class="result" id="result"></div>
 
   <script>
-    const wheel = document.getElementById('wheel');
-    const spinBtn = document.getElementById('spinBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const result = document.getElementById('result');
-
-    const COUNT = 60;
-    const anglePer = 360 / COUNT;
-
-    // 建立 60 個扇形上的數字（用圓周上的標記 + 文字）
-    for (let i = 0; i < COUNT; i++) {
-      const segment = document.createElement('div');
-      segment.className = 'segment';
-      segment.style.transform = `rotate(${i * anglePer}deg)`;
-
-      const label = document.createElement('div');
-      label.className = 'segment-label';
-      label.textContent = i + 1;
-
-      // 簡單做一下顏色交錯
-      const hue = (i * 6) % 360;
-      label.style.color = `hsl(${hue}, 80%, 70%)`;
-
-      segment.appendChild(label);
-      wheel.appendChild(segment);
-    }
-
-    let currentRotation = 0;
-    let isSpinning = false;
-
-    function spin() {
-      if (isSpinning) return;
-      isSpinning = true;
-      spinBtn.disabled = true;
-      result.textContent = '轉動中...';
-
-      // 隨機抽一個數字 1–60
-      const chosen = Math.floor(Math.random() * COUNT) + 1;
-
-      // 指標在「正上方」，我們讓該數字旋轉到 90deg（視覺上在指標下）
-      // 加上多圈旋轉，製造戲劇效果
-      const extraTurns = 5 + Math.floor(Math.random() * 5); // 5~9 圈
-      const targetDeg =
-        extraTurns * 360 +
-        (90 - anglePer * (chosen - 1)); // 讓 chosen 對到指標
-
-      currentRotation = targetDeg;
-
-      // 套用旋轉
-      wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-      // 等動畫結束（跟 CSS transition 時間一致或略長）
-      setTimeout(() => {
-        isSpinning = false;
-        spinBtn.disabled = false;
-        result.textContent = `抽到的數字是：${chosen}`;
-      }, 4200);
-    }
-
-    function resetWheel() {
-      if (isSpinning) return;
-      currentRotation = 0;
-      wheel.style.transform = 'rotate(0deg)';
-      result.textContent = '';
-    }
-
-    spinBtn.addEventListener('click', spin);
-    resetBtn.addEventListener('click', resetWheel);
-  </script>
-</body>
-</html>
+    // === 可依班級人數調整 ===
+    const
