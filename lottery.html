@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>課堂點名 1–60 旋轉輪盤（含姓名）</title>
+  <title>課堂點名 1–74 旋轉輪盤（含姓名）</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -139,8 +139,8 @@
     }
 
     .names-panel {
-      width: 240px;
-      max-height: 420px;
+      width: 260px;
+      max-height: 480px;
       display: flex;
       flex-direction: column;
       background: #020617;
@@ -188,7 +188,7 @@
 
     .names-list li .no {
       opacity: 0.8;
-      width: 40px;
+      width: 46px;
     }
 
     .names-list li .nm {
@@ -213,7 +213,7 @@
       background: #020617;
     }
 
-    @media (max-width: 800px) {
+    @media (max-width: 880px) {
       .app {
         flex-direction: column;
         align-items: center;
@@ -230,7 +230,7 @@
       <h1>課堂點名數字輪盤</h1>
       <div class="hint">
         點「旋轉」抽出座號，右側同步顯示姓名。<br>
-        修改程式碼中的 <code>students</code> 陣列即可換班級名單。
+        名單已設定為 1–74 號。
       </div>
 
       <div class="wheel-container">
@@ -257,20 +257,82 @@
   </div>
 
   <script>
-    // 1. 名單（按座號順序）
+    // 1. 名單（1–74）
     const students = [
-      "學生01", "學生02", "學生03", "學生04", "學生05",
-      "學生06", "學生07", "學生08", "學生09", "學生10",
-      "學生11", "學生12", "學生13", "學生14", "學生15",
-      "學生16", "學生17", "學生18", "學生19", "學生20",
-      "學生21", "學生22", "學生23", "學生24", "學生25",
-      "學生26", "學生27", "學生28", "學生29", "學生30",
-      "學生31", "學生32", "學生33", "學生34", "學生35",
-      "學生36", "學生37", "學生38", "學生39", "學生40",
-      "學生41", "學生42", "學生43", "學生44", "學生45",
-      "學生46", "學生47", "學生48", "學生49", "學生50",
-      "學生51", "學生52", "學生53", "學生54", "學生55",
-      "學生56", "學生57", "學生58", "學生59", "學生60"
+      "詹○翔",
+      "陳○楦",
+      "吳○凱",
+      "莊○閎",
+      "謝○窈",
+      "黃○誼",
+      "林○儀",
+      "李○璇",
+      "蔡○希",
+      "張○綸",
+      "陳○恩",
+      "羅○雁",
+      "杜○倢",
+      "吳○恩",
+      "陳○宸",
+      "簡○羚",
+      "林○伃",
+      "田○妃",
+      "陳○原",
+      "陳○甯",
+      "林○嵐",
+      "蘇○峯",
+      "徐○玉",
+      "陳○諺",
+      "李○昇",
+      "應○林",
+      "陳○妤",
+      "陳○臻",
+      "陳○卉",
+      "劉○真",
+      "洪○倫",
+      "沈○浥",
+      "彭○廷",
+      "程○涵",
+      "陳○均",
+      "劉○中",
+      "王○彥",
+      "蘇○宇",
+      "黃○承",
+      "林○珊",
+      "程○翔",
+      "吳○庭",
+      "張○晴",
+      "莊○萱",
+      "張○盈",
+      "鄭○暐",
+      "孫○志",
+      "徐○哿",
+      "洪○軒",
+      "林○恩",
+      "朱○豪",
+      "朱○芸",
+      "賴○涵",
+      "許○珮",
+      "簡○心",
+      "許○欣",
+      "林○羲",
+      "潘○君",
+      "吳○珊",
+      "黃○杰",
+      "廖○晴",
+      "陳○瑋",
+      "杜○倢",
+      "林○萱",
+      "王○昕",
+      "王○學",
+      "張○杰",
+      "韓○文",
+      "程○宥",
+      "蔡○安",
+      "鄭○涵",
+      "徐○勝",
+      "林○紘",
+      "盧○霖"
     ];
 
     const COUNT = students.length;
@@ -298,7 +360,7 @@
       label.className = 'segment-label';
       label.textContent = i + 1;
 
-      const hue = (i * 6) % 360;
+      const hue = (i * 5) % 360;
       label.style.color = `hsl(${hue}, 80%, 70%)`;
 
       segment.appendChild(label);
@@ -328,72 +390,4 @@
     let currentRotation = 0;
     let isSpinning = false;
     let round = 0;
-    const recent = [];
-
-    function drawNonRepeating() {
-      let n;
-      let tries = 0;
-      do {
-        n = Math.floor(Math.random() * COUNT) + 1;
-        tries++;
-        if (tries > 30) break;
-      } while (recent.includes(n));
-
-      recent.push(n);
-      if (recent.length > RECENT_LIMIT) {
-        recent.shift();
-      }
-      return n;
-    }
-
-    function highlightName(no) {
-      const items = namesList.querySelectorAll('li');
-      items.forEach(li => {
-        li.classList.toggle('active', Number(li.dataset.no) === no);
-      });
-    }
-
-    function spin() {
-      if (isSpinning) return;
-      isSpinning = true;
-      spinBtn.disabled = true;
-      result.textContent = '轉動中…';
-
-      const chosen = drawNonRepeating();
-      const chosenName = students[chosen - 1] || '(未填姓名)';
-
-      const extraTurns = 5 + Math.floor(Math.random() * 5);
-      const targetDeg =
-        extraTurns * 360 +
-        (90 - anglePer * (chosen - 1));
-
-      currentRotation = targetDeg;
-      wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-      setTimeout(() => {
-        isSpinning = false;
-        spinBtn.disabled = false;
-        round++;
-        roundInfo.textContent = `第 ${round} 輪`;
-        result.textContent = `抽到：${chosen} 號　${chosenName}`;
-        highlightName(chosen);
-      }, 4200);
-    }
-
-    function resetAll() {
-      if (isSpinning) return;
-      currentRotation = 0;
-      wheel.style.transform = 'rotate(0deg)';
-      round = 0;
-      recent.length = 0;
-      roundInfo.textContent = '';
-      result.textContent = '';
-      highlightName(-1);
-    }
-
-    // 4. 綁定按鈕事件
-    spinBtn.addEventListener('click', spin);
-    resetBtn.addEventListener('click', resetAll);
-  </script>
-</body>
-</html>
+    const recent =
