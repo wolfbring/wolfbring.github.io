@@ -32,8 +32,6 @@
       text-align: left;
     }
 
-    /* 左側：輪盤區 */
-
     .wheel-panel {
       display: flex;
       flex-direction: column;
@@ -140,8 +138,6 @@
       text-align: center;
     }
 
-    /* 右側：姓名列表 */
-
     .names-panel {
       width: 240px;
       max-height: 420px;
@@ -230,7 +226,6 @@
 </head>
 <body>
   <div class="app">
-    <!-- 左：輪盤 -->
     <div class="wheel-panel">
       <h1>課堂點名數字輪盤</h1>
       <div class="hint">
@@ -251,7 +246,6 @@
       <div class="result" id="result"></div>
     </div>
 
-    <!-- 右：姓名列表 -->
     <div class="names-panel">
       <div class="names-header">
         <span>座號與姓名</span>
@@ -263,8 +257,7 @@
   </div>
 
   <script>
-    // ===== 1. 在這裡設定班級名單（index 0 對應座號 1） =====
-    // 如果班級沒滿 60 人，只要填到實際人數即可，剩下留空字串。
+    // 1. 名單（按座號順序）
     const students = [
       "學生01", "學生02", "學生03", "學生04", "學生05",
       "學生06", "學生07", "學生08", "學生09", "學生10",
@@ -279,12 +272,128 @@
       "學生51", "學生52", "學生53", "學生54", "學生55",
       "學生56", "學生57", "學生58", "學生59", "學生60"
     ];
-    // =======================================================
 
-    const COUNT = students.length;  // 自動以名單長度為座號數
-    const RECENT_LIMIT = 5;         // 最近幾次不重複
+    const COUNT = students.length;
+    const RECENT_LIMIT = 5;
 
     const wheel = document.getElementById('wheel');
     const spinBtn = document.getElementById('spinBtn');
     const resetBtn = document.getElementById('resetBtn');
-    const result =
+    const result = document.getElementById('result');
+    const roundInfo = document.getElementById('roundInfo');
+
+    const namesList = document.getElementById('namesList');
+    const countInfo = document.getElementById('countInfo');
+    const namesFooter = document.getElementById('namesFooter');
+
+    const anglePer = 360 / COUNT;
+
+    // 2. 產生圓周數字
+    for (let i = 0; i < COUNT; i++) {
+      const segment = document.createElement('div');
+      segment.className = 'segment';
+      segment.style.transform = `rotate(${i * anglePer}deg)`;
+
+      const label = document.createElement('div');
+      label.className = 'segment-label';
+      label.textContent = i + 1;
+
+      const hue = (i * 6) % 360;
+      label.style.color = `hsl(${hue}, 80%, 70%)`;
+
+      segment.appendChild(label);
+      wheel.appendChild(segment);
+    }
+
+    // 3. 右側名單
+    countInfo.textContent = `共 ${COUNT} 人`;
+    students.forEach((name, index) => {
+      const li = document.createElement('li');
+      li.dataset.no = index + 1;
+
+      const noSpan = document.createElement('span');
+      noSpan.className = 'no';
+      noSpan.textContent = String(index + 1).padStart(2, '0');
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'nm';
+      nameSpan.textContent = name || '(未填姓名)';
+
+      li.appendChild(noSpan);
+      li.appendChild(nameSpan);
+      namesList.appendChild(li);
+    });
+    namesFooter.textContent = '提示：點名前先確認座號與姓名對應。';
+
+    let currentRotation = 0;
+    let isSpinning = false;
+    let round = 0;
+    const recent = [];
+
+    function drawNonRepeating() {
+      let n;
+      let tries = 0;
+      do {
+        n = Math.floor(Math.random() * COUNT) + 1;
+        tries++;
+        if (tries > 30) break;
+      } while (recent.includes(n));
+
+      recent.push(n);
+      if (recent.length > RECENT_LIMIT) {
+        recent.shift();
+      }
+      return n;
+    }
+
+    function highlightName(no) {
+      const items = namesList.querySelectorAll('li');
+      items.forEach(li => {
+        li.classList.toggle('active', Number(li.dataset.no) === no);
+      });
+    }
+
+    function spin() {
+      if (isSpinning) return;
+      isSpinning = true;
+      spinBtn.disabled = true;
+      result.textContent = '轉動中…';
+
+      const chosen = drawNonRepeating();
+      const chosenName = students[chosen - 1] || '(未填姓名)';
+
+      const extraTurns = 5 + Math.floor(Math.random() * 5);
+      const targetDeg =
+        extraTurns * 360 +
+        (90 - anglePer * (chosen - 1));
+
+      currentRotation = targetDeg;
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+      setTimeout(() => {
+        isSpinning = false;
+        spinBtn.disabled = false;
+        round++;
+        roundInfo.textContent = `第 ${round} 輪`;
+        result.textContent = `抽到：${chosen} 號　${chosenName}`;
+        highlightName(chosen);
+      }, 4200);
+    }
+
+    function resetAll() {
+      if (isSpinning) return;
+      currentRotation = 0;
+      wheel.style.transform = 'rotate(0deg)';
+      round = 0;
+      recent.length = 0;
+      roundInfo.textContent = '';
+      result.textContent = '';
+      highlightName(-1);
+    }
+
+    // 4. 綁定按鈕事件
+    spinBtn.addEventListener('click', spin);
+    resetBtn.addEventListener('click', resetAll);
+  </script>
+</body>
+</html>
