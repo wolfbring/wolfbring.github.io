@@ -2,28 +2,42 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>課堂點名 1–60 旋轉數字輪盤</title>
+  <title>課堂點名 1–60 旋轉輪盤（含姓名）</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: #020617;
       color: #f9fafb;
       min-height: 100vh;
+      margin: 0;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
     }
 
+    .app {
+      display: flex;
+      gap: 24px;
+      padding: 24px 32px;
+    }
+
     h1 {
-      margin-bottom: 4px;
+      margin: 0 0 4px 0;
     }
 
     .hint {
       font-size: 14px;
       opacity: 0.8;
       margin-bottom: 12px;
-      text-align: center;
+      text-align: left;
+    }
+
+    /* 左側：輪盤區 */
+
+    .wheel-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .wheel-container {
@@ -125,24 +139,152 @@
       margin-top: 2px;
       text-align: center;
     }
+
+    /* 右側：姓名列表 */
+
+    .names-panel {
+      width: 240px;
+      max-height: 420px;
+      display: flex;
+      flex-direction: column;
+      background: #020617;
+      border-radius: 12px;
+      border: 1px solid #1f2933;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+      overflow: hidden;
+    }
+
+    .names-header {
+      padding: 8px 12px;
+      border-bottom: 1px solid #1f2933;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0b1120;
+    }
+
+    .names-header span {
+      opacity: 0.9;
+    }
+
+    .names-list {
+      list-style: none;
+      margin: 0;
+      padding: 4px 0;
+      overflow-y: auto;
+    }
+
+    .names-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 10px;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(15,23,42,0.7);
+      background: transparent;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .names-list li:nth-child(2n) {
+      background: rgba(15,23,42,0.7);
+    }
+
+    .names-list li .no {
+      opacity: 0.8;
+      width: 40px;
+    }
+
+    .names-list li .nm {
+      flex: 1;
+    }
+
+    .names-list li.active {
+      background: #f59e0b;
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .names-list li.active .no {
+      opacity: 1;
+    }
+
+    .names-footer {
+      padding: 4px 10px 6px 10px;
+      font-size: 12px;
+      opacity: 0.8;
+      text-align: right;
+      background: #020617;
+    }
+
+    @media (max-width: 800px) {
+      .app {
+        flex-direction: column;
+        align-items: center;
+      }
+      .names-panel {
+        width: 320px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>課堂點名數字輪盤</h1>
-  <div class="hint">點「旋轉」抽出座號，可改 COUNT 成實際人數。</div>
+  <div class="app">
+    <!-- 左：輪盤 -->
+    <div class="wheel-panel">
+      <h1>課堂點名數字輪盤</h1>
+      <div class="hint">
+        點「旋轉」抽出座號，右側同步顯示姓名。<br>
+        修改程式碼中的 <code>students</code> 陣列即可換班級名單。
+      </div>
 
-  <div class="wheel-container">
-    <div class="pointer"></div>
-    <div class="wheel" id="wheel"></div>
-  </div>
+      <div class="wheel-container">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
+      </div>
 
-  <div class="controls">
-    <button id="spinBtn">旋轉</button>
-    <button id="resetBtn">重置角度</button>
+      <div class="controls">
+        <button id="spinBtn">旋轉</button>
+        <button id="resetBtn">重置</button>
+      </div>
+      <div class="round" id="roundInfo"></div>
+      <div class="result" id="result"></div>
+    </div>
+
+    <!-- 右：姓名列表 -->
+    <div class="names-panel">
+      <div class="names-header">
+        <span>座號與姓名</span>
+        <span id="countInfo"></span>
+      </div>
+      <ul class="names-list" id="namesList"></ul>
+      <div class="names-footer" id="namesFooter"></div>
+    </div>
   </div>
-  <div class="round" id="roundInfo"></div>
-  <div class="result" id="result"></div>
 
   <script>
-    // === 可依班級人數調整 ===
-    const
+    // ===== 1. 在這裡設定班級名單（index 0 對應座號 1） =====
+    // 如果班級沒滿 60 人，只要填到實際人數即可，剩下留空字串。
+    const students = [
+      "學生01", "學生02", "學生03", "學生04", "學生05",
+      "學生06", "學生07", "學生08", "學生09", "學生10",
+      "學生11", "學生12", "學生13", "學生14", "學生15",
+      "學生16", "學生17", "學生18", "學生19", "學生20",
+      "學生21", "學生22", "學生23", "學生24", "學生25",
+      "學生26", "學生27", "學生28", "學生29", "學生30",
+      "學生31", "學生32", "學生33", "學生34", "學生35",
+      "學生36", "學生37", "學生38", "學生39", "學生40",
+      "學生41", "學生42", "學生43", "學生44", "學生45",
+      "學生46", "學生47", "學生48", "學生49", "學生50",
+      "學生51", "學生52", "學生53", "學生54", "學生55",
+      "學生56", "學生57", "學生58", "學生59", "學生60"
+    ];
+    // =======================================================
+
+    const COUNT = students.length;  // 自動以名單長度為座號數
+    const RECENT_LIMIT = 5;         // 最近幾次不重複
+
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spinBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const result =
