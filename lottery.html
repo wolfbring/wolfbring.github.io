@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🎰 課堂點名 1–74 豪華旋轉輪盤</title>
+  <title>課堂點名 1–74 旋轉輪盤（含姓名）</title>
   <style>
     * {
       box-sizing: border-box;
@@ -11,7 +11,7 @@
 
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at 20% 50%, #0a0a1f 0%, #020617 50%, #000 100%);
+      background: linear-gradient(135deg, #020617 0%, #111827 100%);
       color: #f9fafb;
       min-height: 100vh;
       margin: 0;
@@ -19,42 +19,26 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      overflow-x: hidden;
     }
 
     .app {
       display: flex;
-      gap: 40px;
-      max-width: 1600px;
+      gap: 32px;
+      max-width: 1400px;
       width: 100%;
     }
 
     h1 {
-      margin: 0 0 12px 0;
-      font-size: clamp(2.5rem, 6vw, 4rem);
-      background: linear-gradient(135deg, #fbbf24, #f59e0b, #ef4444);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: 0 0 30px rgba(251, 191, 36, 0.5);
-      animation: glowTitle 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes glowTitle {
-      0% { text-shadow: 0 0 20px rgba(251, 191, 36, 0.5); }
-      100% { text-shadow: 0 0 40px rgba(251, 191, 36, 0.8), 0 0 60px rgba(245, 158, 11, 0.4); }
+      margin: 0 0 8px 0;
+      font-size: clamp(2rem, 5vw, 3rem);
     }
 
     .hint {
-      font-size: 1.1rem;
-      opacity: 0.95;
-      margin-bottom: 20px;
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 16px;
       text-align: center;
-      line-height: 1.5;
-      background: rgba(249, 250, 251, 0.1);
-      padding: 12px 20px;
-      border-radius: 12px;
-      border: 1px solid rgba(249, 250, 251, 0.2);
+      line-height: 1.4;
     }
 
     .wheel-panel {
@@ -62,293 +46,400 @@
       flex-direction: column;
       align-items: center;
       flex: 1;
-      position: relative;
-    }
-
-    /* 粒子背景 */
-    .particles {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: radial-gradient(circle, rgba(251, 191, 36, 0.8), transparent);
-      border-radius: 50%;
-      animation: float 6s infinite linear;
-    }
-
-    @keyframes float {
-      0% { transform: translateY(100vh) scale(0); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-100px) scale(1); opacity: 0; }
     }
 
     .wheel-container {
       position: relative;
-      width: 450px;
-      height: 450px;
-      margin-bottom: 24px;
-      z-index: 2;
+      width: 400px;
+      height: 400px;
+      margin-bottom: 20px;
     }
 
     .pointer {
       position: absolute;
-      top: -25px;
+      top: -18px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
-      border-left: 22px solid transparent;
-      border-right: 22px solid transparent;
-      border-bottom: 35px solid #ff6b35;
-      z-index: 15;
-      filter: drop-shadow(0 0 12px #ff6b35) drop-shadow(0 0 24px rgba(255, 107, 53, 0.6));
-      animation: pointerGlow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes pointerGlow {
-      0% { filter: drop-shadow(0 0 12px #ff6b35) drop-shadow(0 0 24px rgba(255, 107, 53, 0.6)); }
-      100% { filter: drop-shadow(0 0 18px #ff6b35) drop-shadow(0 0 36px rgba(255, 107, 53, 0.9)); }
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-bottom: 28px solid #f97316;
+      z-index: 10;
+      filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
     }
 
     .wheel {
       width: 100%;
       height: 100%;
       border-radius: 50%;
+      background: conic-gradient(from 0deg, #1e293b, #0f172a, #1e293b, #0f172a);
+      border: 8px solid #0f172a;
       position: relative;
       overflow: hidden;
-      transform-style: preserve-3d;
-      transition: all 5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      box-shadow: 
-        0 0 0 12px rgba(15, 23, 42, 0.8),
-        inset 0 0 60px rgba(0,0,0,0.7),
-        0 30px 80px rgba(0,0,0,0.8),
-        0 0 100px rgba(251, 191, 36, 0.1);
-    }
-
-    .wheel.spinning {
-      box-shadow: 
-        0 0 0 12px rgba(15, 23, 42, 0.8),
-        inset 0 0 80px rgba(0,0,0,0.8),
-        0 40px 120px rgba(0,0,0,0.9),
-        0 0 150px rgba(251, 191, 36, 0.3);
-    }
-
-    .wheel::before {
-      content: '';
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      right: 20px;
-      bottom: 20px;
-      border-radius: 50%;
-      background: conic-gradient(
-        from 0deg,
-        #ff6b35 0deg 4.86deg,
-        #f7931e 4.86deg 9.73deg,
-        #fbbf24 9.73deg 14.59deg,
-        #fef08a 14.59deg 19.46deg,
-        #34d399 19.46deg 24.32deg,
-        #10b981 24.32deg 29.19deg,
-        #059669 29.19deg 34.05deg,
-        #047857 34.05deg 38.92deg,
-        #06b6d4 38.92deg 43.78deg,
-        #0891b2 43.78deg 48.65deg,
-        #0e7490 48.65deg 53.51deg,
-        #0c4a6e 53.51deg 58.38deg,
-        #8b5cf6 58.38deg 63.24deg,
-        #7c3aed 63.24deg 68.11deg,
-        #6d28d9 68.11deg 72.97deg,
-        #5b21b6 72.97deg 77.84deg,
-        #ec4899 77.84deg 82.7deg,
-        #db2777 82.7deg 87.57deg,
-        #be185d 87.57deg 92.43deg,
-        #9d174d 92.43deg 97.3deg,
-        #f87171 97.3deg 102.16deg,
-        #ef4444 102.16deg 107.03deg,
-        #dc2626 107.03deg 111.89deg,
-        #b91c1c 111.89deg 116.76deg
-      );
-      mask: radial-gradient(circle closest-side, transparent 70%, black 71%);
-      animation: wheelShine 10s linear infinite;
-    }
-
-    @keyframes wheelShine {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      transition: transform 4.5s cubic-bezier(0.23, 1, 0.32, 1);
+      box-shadow:
+        0 0 0 6px #111827,
+        inset 0 0 40px rgba(0,0,0,0.6),
+        0 25px 50px rgba(0,0,0,0.7);
     }
 
     .segment {
       position: absolute;
-      width: 55%;
-      height: 4px;
+      width: 52%;
+      height: 3px;
       top: 50%;
       left: 50%;
       transform-origin: 0% 50%;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
     }
 
     .segment-label {
       position: absolute;
-      right: -22px;
-      top: -14px;
-      width: 40px;
+      right: -20px;
+      top: -12px;
+      width: 36px;
       text-align: center;
-      font-size: clamp(9px, 1.6vw, 11px);
-      font-weight: 800;
+      font-size: clamp(10px, 1.8vw, 12px);
+      font-weight: 600;
       color: #fefefe;
       transform-origin: 50% 50%;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
-    .center-hub {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 90px;
-      height: 90px;
-      background: radial-gradient(circle, #fbbf24 0%, #f59e0b 60%, #d97706 100%);
-      border-radius: 50%;
-      border: 8px solid #fef08a;
-      box-shadow: 
-        0 0 30px rgba(251, 191, 36, 0.8),
-        inset 0 0 20px rgba(255, 255, 255, 0.3);
-      z-index: 12;
-      animation: hubPulse 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes hubPulse {
-      0% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.3); }
-      100% { box-shadow: 0 0 45px rgba(251, 191, 36, 1), inset 0 0 30px rgba(255, 255, 255, 0.5); }
-    }
-
-    /* 其他樣式保持原樣... */
     .controls {
       display: flex;
-      gap: 16px;
-      margin-bottom: 12px;
-      z-index: 10;
+      gap: 12px;
+      margin-bottom: 8px;
     }
 
     button {
-      padding: 16px 32px;
-      border-radius: 50px;
+      padding: 12px 24px;
+      border-radius: 999px;
       border: none;
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
       color: #f9fafb;
       cursor: pointer;
-      font-size: 18px;
-      font-weight: 700;
-      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      transition: left 0.5s;
-    }
-
-    button:hover::before {
-      left: 100%;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+      transition: all 0.2s ease;
     }
 
     button:hover {
-      transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 12px 35px rgba(59, 130, 246, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
     }
 
     button:active {
-      transform: translateY(-2px) scale(1.02);
+      transform: translateY(0);
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
     }
 
     button:disabled {
-      background: linear-gradient(135deg, #4b5563, #374151);
+      background: #4b5563;
       cursor: default;
       transform: none;
-      box-shadow: 0 4px 12px rgba(75, 85, 99, 0.3);
+      box-shadow: none;
     }
 
     .round {
-      font-size: 1.3rem;
-      opacity: 0.95;
-      margin-bottom: 12px;
-      min-height: 28px;
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 8px;
+      min-height: 24px;
       text-align: center;
-      font-weight: 700;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      font-weight: 500;
     }
 
     .result {
-      min-height: 100px;
-      font-size: clamp(3rem, 10vw, 6rem);
-      font-weight: 900;
-      margin-top: 12px;
+      min-height: 80px;
+      font-size: clamp(2.2rem, 8vw, 4.5rem);
+      font-weight: 800;
+      margin-top: 8px;
       text-align: center;
-      line-height: 1;
-      text-shadow: 
-        0 0 20px currentColor,
-        0 4px 16px rgba(0,0,0,0.9);
-      background: linear-gradient(135deg, rgba(249, 250, 251, 0.15), rgba(249, 250, 251, 0.05));
-      padding: 24px 32px;
-      border-radius: 24px;
-      border: 3px solid rgba(249, 250, 251, 0.3);
-      backdrop-filter: blur(20px);
-      box-shadow: 
-        0 20px 60px rgba(0,0,0,0.6),
-        inset 0 1px 0 rgba(255,255,255,0.2);
-      animation: resultPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    }
-
-    @keyframes resultPop {
-      0% { transform: scale(0.3) rotateX(90deg); opacity: 0; }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1) rotateX(0); opacity: 1; }
+      line-height: 1.1;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.8);
+      background: rgba(249, 250, 251, 0.1);
+      padding: 16px 24px;
+      border-radius: 16px;
+      border: 2px solid rgba(249, 250, 251, 0.2);
     }
 
     .names-panel {
-      width: 340px;
-      max-height: 580px;
+      width: 300px;
+      max-height: 520px;
       display: flex;
       flex-direction: column;
       background: rgba(17, 24, 39, 0.95);
-      border-radius: 24px;
-      border: 2px solid rgba(31, 41, 55, 0.8);
-      box-shadow: 
-        0 30px 80px rgba(0,0,0,0.7),
-        inset 0 1px 0 rgba(255,255,255,0.1);
+      border-radius: 20px;
+      border: 1px solid rgba(31, 41, 55, 0.8);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
       overflow: hidden;
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(10px);
     }
 
     .names-header {
-      padding: 16px 20px;
-      border-bottom: 2px solid rgba(31, 41, 55, 0.8);
-      font-size: 1.1rem;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+      font-size: 1rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: linear-gradient(135deg, rgba(11, 17, 32, 0.95), rgba(17, 24, 39, 0.8));
-      font-weight: 700;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      background: rgba(11, 17, 32, 0.9);
+      font-weight: 600;
     }
 
     .names-list {
-      list
+      list-style: none;
+      margin: 0;
+      padding: 8px 0;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .names-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      font-size: 15px;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.6);
+      background: transparent;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .names-list li:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .names-list li:nth-child(2n) {
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .names-list li .no {
+      opacity: 0.85;
+      width: 50px;
+      font-weight: 700;
+    }
+
+    .names-list li .nm {
+      flex: 1;
+      padding-left: 4px;
+    }
+
+    .names-list li.active {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+      color: #111827;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+
+    .names-list li.active .no {
+      opacity: 1;
+    }
+
+    .names-footer {
+      padding: 8px 16px;
+      font-size: 13px;
+      opacity: 0.85;
+      text-align: right;
+      background: rgba(2, 6, 23, 0.9);
+      font-style: italic;
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        flex-direction: column;
+        gap: 24px;
+        align-items: center;
+      }
+      .names-panel {
+        width: 100%;
+        max-width: 360px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="wheel-panel">
+      <h1>🎯 課堂點名輪盤</h1>
+      <div class="hint">
+        點擊「旋轉」按鈕隨機抽出同學<br>
+        <small>右側同步高亮顯示，支援最近 5 次不重複</small>
+      </div>
+
+      <div class="wheel-container">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
+      </div>
+
+      <div class="controls">
+        <button id="spinBtn">🎲 旋轉抽取</button>
+        <button id="resetBtn">🔄 重置</button>
+      </div>
+      <div class="round" id="roundInfo"></div>
+      <div class="result" id="result">準備抽取...</div>
+    </div>
+
+    <div class="names-panel">
+      <div class="names-header">
+        <span>📋 1–74 號同學名單</span>
+        <span id="countInfo">74 人</span>
+      </div>
+      <ul class="names-list" id="namesList"></ul>
+      <div class="names-footer" id="namesFooter"></div>
+    </div>
+  </div>
+
+  <script>
+    // 1–74 號名單（已整合）
+    const students = [
+      "詹○翔","陳○楦","吳○凱","莊○閎","謝○窈","黃○誼","林○儀","李○璇","蔡○希","張○綸",
+      "陳○恩","羅○雁","杜○倢","吳○恩","陳○宸","簡○羚","林○伃","田○妃","陳○原","陳○甯",
+      "林○嵐","蘇○峯","徐○玉","陳○諺","李○昇","應○林","陳○妤","陳○臻","陳○卉","劉○真",
+      "洪○倫","沈○浥","彭○廷","程○涵","陳○均","劉○中","王○彥","蘇○宇","黃○承","林○珊",
+      "程○翔","吳○庭","張○晴","莊○萱","張○盈","鄭○暐","孫○志","徐○哿","洪○軒","林○恩",
+      "朱○豪","朱○芸","賴○涵","許○珮","簡○心","許○欣","林○羲","潘○君","吳○珊","黃○杰",
+      "廖○晴","陳○瑋","杜○倢","林○萱","王○昕","王○學","張○杰","韓○文","程○宥","蔡○安",
+      "鄭○涵","徐○勝","林○紘","盧○霖"
+    ];
+
+    const COUNT = students.length;
+    const RECENT_LIMIT = 5;
+
+    // DOM 元素
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spinBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const result = document.getElementById('result');
+    const roundInfo = document.getElementById('roundInfo');
+    const namesList = document.getElementById('namesList');
+    const countInfo = document.getElementById('countInfo');
+    const namesFooter = document.getElementById('namesFooter');
+
+    const anglePer = 360 / COUNT;
+
+    // 產生輪盤數字（74格時字體更小但清晰）
+    for (let i = 0; i < COUNT; i++) {
+      const segment = document.createElement('div');
+      segment.className = 'segment';
+      segment.style.transform = `rotate(${i * anglePer}deg)`;
+
+      const label = document.createElement('div');
+      label.className = 'segment-label';
+      label.textContent = i + 1;
+      
+      const hue = (i * 4.8) % 360; // 74格顏色漸變
+      label.style.color = `hsl(${hue}, 85%, 75%)`;
+
+      segment.appendChild(label);
+      wheel.appendChild(segment);
+    }
+
+    // 產生右側名單
+    countInfo.textContent = `${COUNT} 人`;
+    students.forEach((name, index) => {
+      const li = document.createElement('li');
+      li.dataset.no = index + 1;
+
+      const noSpan = document.createElement('span');
+      noSpan.className = 'no';
+      noSpan.textContent = String(index + 1).padStart(2, '0') + '號';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'nm';
+      nameSpan.textContent = name;
+
+      li.appendChild(noSpan);
+      li.appendChild(nameSpan);
+      namesList.appendChild(li);
+    });
+    namesFooter.textContent = '最近5次不重複抽取';
+
+    let currentRotation = 0;
+    let isSpinning = false;
+    let round = 0;
+    const recent = [];
+
+    function drawNonRepeating() {
+      let n;
+      let tries = 0;
+      do {
+        n = Math.floor(Math.random() * COUNT) + 1;
+        tries++;
+        if (tries > 50) break;
+      } while (recent.includes(n));
+
+      recent.push(n);
+      if (recent.length > RECENT_LIMIT) {
+        recent.shift();
+      }
+      return n;
+    }
+
+    function highlightName(no) {
+      namesList.querySelectorAll('li').forEach(li => {
+        li.classList.toggle('active', Number(li.dataset.no) === no);
+      });
+    }
+
+    function spin() {
+      if (isSpinning) return;
+      
+      isSpinning = true;
+      spinBtn.disabled = true;
+      spinBtn.textContent = '轉動中…';
+      result.textContent = '🎲 轉動中…';
+      result.style.background = 'rgba(249, 250, 251, 0.05)';
+
+      const chosen = drawNonRepeating();
+      const chosenName = students[chosen - 1];
+
+      const extraTurns = 5 + Math.floor(Math.random() * 6);
+      const targetDeg = extraTurns * 360 + (90 - anglePer * (chosen - 1));
+
+      currentRotation = targetDeg;
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+      setTimeout(() => {
+        isSpinning = false;
+        spinBtn.disabled = false;
+        spinBtn.textContent = '🎲 旋轉抽取';
+        round++;
+        roundInfo.textContent = `第 ${round} 輪`;
+        result.innerHTML = `<strong>${chosen}號</strong><br>${chosenName}`;
+        result.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2))';
+        highlightName(chosen);
+        
+        // 自動滾動到被選中的人
+        const activeLi = namesList.querySelector(`li[data-no="${chosen}"]`);
+        if (activeLi) {
+          activeLi.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 4600);
+    }
+
+    function resetAll() {
+      if (isSpinning) return;
+      currentRotation = 0;
+      wheel.style.transform = 'rotate(0deg)';
+      round = 0;
+      recent.length = 0;
+      roundInfo.textContent = '';
+      result.innerHTML = '準備抽取...';
+      result.style.background = 'rgba(249, 250, 251, 0.1)';
+      highlightName(-1);
+      spinBtn.textContent = '🎲 旋轉抽取';
+    }
+
+    // 事件綁定
+    spinBtn.addEventListener('click', spin);
+    resetBtn.addEventListener('click', resetAll);
+    
+    // 測試：頁面載入完成後顯示就緒
+    console.log('輪盤載入完成，共', COUNT, '人');
+  </script>
+</body>
+</html>
