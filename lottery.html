@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>1–60 旋轉數字輪盤</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #020617;
+      color: #f9fafb;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    .hint {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-bottom: 16px;
+    }
+
+    .wheel-container {
+      position: relative;
+      width: 360px;
+      height: 360px;
+      margin-bottom: 20px;
+    }
+
+    /* 上方固定指標 */
+    .pointer {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-bottom: 22px solid #f97316;
+      z-index: 10;
+      filter: drop-shadow(0 0 4px rgba(0,0,0,0.6));
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #1e293b, #020617);
+      border: 6px solid #0f172a;
+      position: relative;
+      overflow: hidden;
+      transition: transform 4s cubic-bezier(0.17, 0.89, 0.24, 1.1);
+      box-shadow:
+        0 0 0 4px #111827,
+        0 18px 35px rgba(0,0,0,0.6);
+    }
+
+    .segment {
+      position: absolute;
+      width: 50%;
+      height: 2px; /* 先用細線標示圓周，數字再往外推 */
+      top: 50%;
+      left: 50%;
+      transform-origin: 0% 50%;
+    }
+
+    .segment-label {
+      position: absolute;
+      right: -18px;
+      top: -10px;
+      width: 32px;
+      text-align: center;
+      font-size: 11px;
+      color: #e5e7eb;
+      transform-origin: 50% 50%;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    button {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: none;
+      background: #3b82f6;
+      color: #f9fafb;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    button:active {
+      background: #1d4ed8;
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      background: #4b5563;
+      cursor: default;
+    }
+
+    .result {
+      min-height: 24px;
+      font-size: 18px;
+      margin-top: 4px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>1–60 旋轉數字輪盤</h1>
+  <div class="hint">點擊「旋轉」後，等輪盤停下來，看指標上方的數字。</div>
+
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <div class="wheel" id="wheel"></div>
+  </div>
+
+  <div class="controls">
+    <button id="spinBtn">旋轉</button>
+    <button id="resetBtn">重置角度</button>
+  </div>
+  <div class="result" id="result"></div>
+
+  <script>
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spinBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const result = document.getElementById('result');
+
+    const COUNT = 60;
+    const anglePer = 360 / COUNT;
+
+    // 建立 60 個扇形上的數字（用圓周上的標記 + 文字）
+    for (let i = 0; i < COUNT; i++) {
+      const segment = document.createElement('div');
+      segment.className = 'segment';
+      segment.style.transform = `rotate(${i * anglePer}deg)`;
+
+      const label = document.createElement('div');
+      label.className = 'segment-label';
+      label.textContent = i + 1;
+
+      // 簡單做一下顏色交錯
+      const hue = (i * 6) % 360;
+      label.style.color = `hsl(${hue}, 80%, 70%)`;
+
+      segment.appendChild(label);
+      wheel.appendChild(segment);
+    }
+
+    let currentRotation = 0;
+    let isSpinning = false;
+
+    function spin() {
+      if (isSpinning) return;
+      isSpinning = true;
+      spinBtn.disabled = true;
+      result.textContent = '轉動中...';
+
+      // 隨機抽一個數字 1–60
+      const chosen = Math.floor(Math.random() * COUNT) + 1;
+
+      // 指標在「正上方」，我們讓該數字旋轉到 90deg（視覺上在指標下）
+      // 加上多圈旋轉，製造戲劇效果
+      const extraTurns = 5 + Math.floor(Math.random() * 5); // 5~9 圈
+      const targetDeg =
+        extraTurns * 360 +
+        (90 - anglePer * (chosen - 1)); // 讓 chosen 對到指標
+
+      currentRotation = targetDeg;
+
+      // 套用旋轉
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+      // 等動畫結束（跟 CSS transition 時間一致或略長）
+      setTimeout(() => {
+        isSpinning = false;
+        spinBtn.disabled = false;
+        result.textContent = `抽到的數字是：${chosen}`;
+      }, 4200);
+    }
+
+    function resetWheel() {
+      if (isSpinning) return;
+      currentRotation = 0;
+      wheel.style.transform = 'rotate(0deg)';
+      result.textContent = '';
+    }
+
+    spinBtn.addEventListener('click', spin);
+    resetBtn.addEventListener('click', resetWheel);
+  </script>
+</body>
+</html>
