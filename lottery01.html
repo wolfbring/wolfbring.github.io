@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>課堂討論題目抽籤</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0c0c;
+      --bg2: #161616;
+      --bg3: #1e1e1e;
+      --border: rgba(255,255,255,0.12);
+      --border2: rgba(255,255,255,0.25);
+      --text: #f0ede6;
+      --text2: #9a9690;
+      --text3: #5a5754;
+      --accent: #f0ede6;
+      --accent-dim: rgba(240,237,230,0.06);
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Serif TC', serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body {
+      padding: 3rem 1.5rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    /* Header */
+    .header { text-align: center; }
+    .header-en {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--text3);
+    }
+    .header-zh {
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      color: var(--text2);
+      margin-top: 6px;
+    }
+
+    /* Stage */
+    .stage {
+      width: 100%;
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg2);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stage-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .stage.lit .stage-bar { transform: scaleX(1); }
+
+    .topic-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 72px;
+      line-height: 1;
+      color: var(--text3);
+      transition: color 0.4s;
+      user-select: none;
+      letter-spacing: 0.05em;
+    }
+    .stage.lit .topic-number { color: var(--text); }
+
+    .topic-display {
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .topic-text {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--text);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .topic-text.idle {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text3);
+      letter-spacing: 0.1em;
+    }
+
+    .topic-text.rolling {
+      font-size: 22px;
+      color: var(--text2);
+      font-weight: 700;
+    }
+
+    .topic-text.landed {
+      animation: impact 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes impact {
+      0%   { opacity: 0; transform: translateY(20px) scale(0.88); }
+      60%  { opacity: 1; transform: translateY(-5px) scale(1.05); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .divider {
+      width: 48px;
+      height: 0.5px;
+      background: var(--border);
+    }
+
+    .topic-sub {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      color: var(--text3);
+      text-align: center;
+      min-height: 18px;
+      font-family: 'Bebas Neue', sans-serif;
+    }
+
+    /* Buttons */
+    .btn-wrap {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      padding: 0.7rem 2rem;
+      border: 0.5px solid var(--border2);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .btn:hover { background: var(--accent-dim); border-color: var(--accent); }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .btn-discuss {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      display: none;
+    }
+    .btn-discuss:hover { opacity: 0.85; background: var(--accent); }
+
+    /* Tags */
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .tag {
+      font-size: 12px;
+      padding: 5px 14px;
+      border-radius: 99px;
+      border: 0.5px solid var(--border);
+      background: transparent;
+      color: var(--text3);
+      transition: all 0.2s;
+      cursor: default;
+    }
+
+    .tag.highlight {
+      background: var(--accent-dim);
+      color: var(--text);
+      border-color: var(--border2);
+      font-weight: 700;
+      transform: scale(1.06);
+    }
+
+    /* Discussion panel */
+    .discussion-panel {
+      width: 100%;
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg2);
+      overflow: hidden;
+      display: none;
+    }
+
+    .discussion-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 0.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .discussion-header-text {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text3);
+    }
+
+    .discussion-body {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .point {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .point-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      line-height: 1;
+      color: var(--text3);
+      flex-shrink: 0;
+      width: 28px;
+    }
+
+    .point-content { flex: 1; }
+
+    .point-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .point-body {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.8;
+    }
+
+    /* History */
+    .history-wrap {
+      width: 100%;
+      display: none;
+    }
+
+    .history-label {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--text3);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .history-items {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .history-item {
+      font-size: 13px;
+      color: var(--text2);
+      padding: 6px 14px;
+      border-left: 1.5px solid var(--border);
+    }
+
+    .history-item:first-child {
+      border-left-color: var(--accent);
+      color: var(--text);
+    }
+
+    /* Footer */
+    .footer {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text3);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-en">CLASSROOM DISCUSSION LOTTERY</div>
+    <div class="header-zh">課堂討論題目抽籤</div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="stage-bar"></div>
+    <div class="topic-number" id="topicNum">—</div>
+    <div class="topic-display">
+      <div class="topic-text idle" id="topicText">按下抽籤，選出今日議題</div>
+    </div>
+    <div class="divider"></div>
+    <div class="topic-sub" id="topicSub"></div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn" id="spinBtn" onclick="spin()">抽　籤</button>
+    <button class="btn btn-discuss" id="discussBtn" onclick="showDiscussion()">討論切入點</button>
+  </div>
+
+  <div class="tags-row" id="tagsRow"></div>
+
+  <div class="discussion-panel" id="discussionPanel">
+    <div class="discussion-header">
+      <span class="discussion-header-text">DISCUSSION POINTS — 討論切入點</span>
+    </div>
+    <div class="discussion-body" id="discussionBody"></div>
+  </div>
+
+  <div class="history-wrap" id="historyWrap">
+    <div class="history-label">— 抽籤紀錄 —</div>
+    <div class="history-items" id="historyItems"></div>
+  </div>
+
+  <div class="footer">MADE FOR CLASSROOM USE</div>
+</div>
+
+<script>
+const topics = [
+  {
+    zh: "貧富差距擴大", en: "Widening Wealth Gap", num: "01",
+    points: [
+      { title: "結構性原因還是個人責任？", body: "貧富差距究竟是資本主義制度的必然產物，還是個人努力與選擇的結果？討論稅制、教育機會、社會流動性如何影響財富分配。" },
+      { title: "財富重分配：正義還是干預？", body: "累進稅、遺產稅、基本收入等政策能否縮小差距？這些措施是社會正義的體現，還是對個人財產權的侵害？" },
+      { title: "數位時代的新貧富鴻溝", body: "科技加速了財富集中：少數科技巨頭坐擁大量財富，而自動化取代了大量中低階工作。討論數位落差是否正在創造新形式的階級固化。" }
+    ]
+  },
+  {
+    zh: "環境污染惡化", en: "Environmental Degradation", num: "02",
+    points: [
+      { title: "誰該為污染負責？", body: "企業排放、政府監管不足、還是消費者行為？討論污染責任如何在個人、企業與國家之間分配，以及「污染者付費」原則的實踐困境。" },
+      { title: "經濟發展 vs 環境保護", body: "開發中國家是否有權重複已開發國家走過的高污染發展路徑？討論氣候正義與「共同但有差異的責任」原則。" },
+      { title: "綠色轉型的代價由誰承擔？", body: "再生能源、電動車、碳稅等政策可能推高能源與生活成本，對弱勢族群衝擊更大。討論如何在轉型過程中兼顧社會公平。" }
+    ]
+  },
+  {
+    zh: "高齡化人口", en: "Population Ageing", num: "03",
+    points: [
+      { title: "誰來照顧老人？——照護體系的崩潰與重建", body: "隨著老年人口比例上升，家庭照護壓力劇增，傳統「子女養老」模式逐漸失靈。政府、市場、家庭三方應如何分擔照護責任？科技能否填補缺口？" },
+      { title: "年金危機——下一代該為上一代買單嗎？", body: "多數國家的退休金制度建立在「工作人口撫養退休人口」的邏輯上，但當扶養比持續惡化，這個世代契約還公平嗎？延後退休年齡是否可行？" },
+      { title: "高齡社會的再定義——老年是負擔還是資產？", body: "主流論述常將高齡化視為「危機」，但高齡者也是消費者、志工、知識傳承者。討論「銀髮經濟」的機會，以及社會如何重新定義「老」的價值。" }
+    ]
+  },
+  {
+    zh: "少子化危機", en: "Declining Birth Rate", num: "04",
+    points: [
+      { title: "生育是個人選擇還是社會責任？", body: "國家能否（或應否）介入生育決策？討論托育補貼、育兒假、房價等結構性因素對生育意願的影響，以及政策介入的邊界。" },
+      { title: "移民能解決少子化嗎？", body: "引進外來人口是補充勞動力的有效途徑，但也涉及文化融合、國家認同等複雜議題。討論移民政策作為少子化對策的可能性與限制。" },
+      { title: "少子化是危機，還是轉機？", body: "人口減少可能帶來資源重新分配、環境壓力降低等效益。討論「縮減社會」的想像：更小的人口規模是否能帶來更高品質的生活？" }
+    ]
+  },
+  {
+    zh: "資源枯竭（能源／水／糧食）", en: "Resource Depletion", num: "05",
+    points: [
+      { title: "資源是全球公共財還是國家主權？", body: "水資源、能源礦藏的歸屬與使用引發國際衝突。討論「資源民族主義」與全球資源共享之間的張力，以及國際合作的可能性。" },
+      { title: "科技能拯救資源危機嗎？", body: "核融合、精準農業、海水淡化等技術被寄予厚望。討論技術樂觀主義的合理性，以及在技術成熟之前，節制消費是否是唯一現實出路。" },
+      { title: "消費文化與資源消耗的共謀", body: "全球資源過度消耗的根源是否在於過度消費的生活方式？討論個人消費行為的改變能否撼動結構性問題，還是必須從生產端進行系統性變革。" }
+    ]
+  },
+  {
+    zh: "人工智慧失控或濫用", en: "AI Misuse & Loss of Control", num: "06",
+    points: [
+      { title: "誰該監管 AI？政府、企業，還是國際組織？", body: "AI 發展速度遠超法規。討論各國監管模式的差異（歐盟 AI Act、美國市場主導、中國政府管控），以及全球 AI 治理框架的可行性。" },
+      { title: "AI 的偏見與歧視：技術中立是神話？", body: "AI 系統在招募、信貸、司法等領域重現甚至放大人類偏見。討論演算法透明度、問責機制，以及「公平的 AI」是否真的可能實現。" },
+      { title: "超級智慧的存在風險：過度擔憂還是迫切危機？", body: "部分 AI 研究者警告 AGI（通用人工智慧）可能對人類構成存在性威脅。討論這種風險的合理性，以及在追求 AI 能力的同時如何建立安全護欄。" }
+    ]
+  }
+];
+
+let spinning = false;
+let current = null;
+let history = [];
+
+const tagsRow = document.getElementById('tagsRow');
+topics.forEach((t, i) => {
+  const tag = document.createElement('div');
+  tag.className = 'tag';
+  tag.id = 'tag-' + i;
+  tag.textContent = t.zh;
+  tagsRow.appendChild(tag);
+});
+
+function spin() {
+  if (spinning) return;
+  spinning = true;
+
+  const btn = document.getElementById('spinBtn');
+  const discussBtn = document.getElementById('discussBtn');
+  const stage = document.getElementById('stage');
+  const topicText = document.getElementById('topicText');
+  const topicNum = document.getElementById('topicNum');
+  const topicSub = document.getElementById('topicSub');
+  const panel = document.getElementById('discussionPanel');
+
+  btn.disabled = true;
+  discussBtn.style.display = 'none';
+  panel.style.display = 'none';
+  stage.classList.remove('lit');
+  document.querySelectorAll('.tag').forEach(t => t.classList.remove('highlight'));
+
+  topicText.className = 'topic-text rolling';
+  topicNum.textContent = '—';
+  topicSub.textContent = '';
+
+  let ticks = 0;
+  const totalTicks = 24;
+
+  const timer = setInterval(() => {
+    const rnd = Math.floor(Math.random() * topics.length);
+    topicText.textContent = topics[rnd].zh;
+    topicNum.textContent = topics[rnd].num;
+    ticks++;
+
+    if (ticks >= totalTicks) {
+      clearInterval(timer);
+      const finalIdx = Math.floor(Math.random() * topics.length);
+      current = finalIdx;
+      const t = topics[finalIdx];
+
+      topicText.className = 'topic-text';
+      void topicText.offsetWidth;
+      topicText.className = 'topic-text landed';
+      topicText.textContent = t.zh;
+      topicNum.textContent = t.num;
+      topicSub.textContent = t.en;
+
+      stage.classList.add('lit');
+      document.getElementById('tag-' + finalIdx).classList.add('highlight');
+
+      history.unshift(t.zh);
+      if (history.length > 5) history.pop();
+      renderHistory();
+
+      discussBtn.style.display = 'block';
+      btn.disabled = false;
+      spinning = false;
+    }
+  }, 90);
+}
+
+function showDiscussion() {
+  if (current === null) return;
+  const t = topics[current];
+  const panel = document.getElementById('discussionPanel');
+  const body = document.getElementById('discussionBody');
+
+  body.innerHTML = t.points.map((p, i) => `
+    <div class="point">
+      <div class="point-num">0${i + 1}</div>
+      <div class="point-content">
+        <div class="point-title">${p.title}</div>
+        <div class="point-body">${p.body}</div>
+      </div>
+    </div>
+  `).join('');
+
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function renderHistory() {
+  const wrap = document.getElementById('historyWrap');
+  const list = document.getElementById('historyItems');
+  if (history.length === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = history.map(h => `<div class="history-item">${h}</div>`).join('');
+}
+</script>
+</body>
+</html>
