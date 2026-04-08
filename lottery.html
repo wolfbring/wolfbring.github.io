@@ -23,9 +23,10 @@
 
     .app {
       display: flex;
-      gap: 32px;
-      max-width: 1400px;
+      gap: 24px;
+      max-width: 1700px;
       width: 100%;
+      align-items: flex-start;
     }
 
     h1 {
@@ -73,10 +74,9 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      /* 金銀交錯背景：每45度輪流金/銀 */
       background: conic-gradient(
-        #fbbf24 0deg 45deg,    /* 金 */
-        #e5e7eb 45deg 90deg,   /* 銀 */
+        #fbbf24 0deg 45deg,
+        #e5e7eb 45deg 90deg,
         #fbbf24 90deg 135deg,
         #e5e7eb 135deg 180deg,
         #fbbf24 180deg 225deg,
@@ -175,11 +175,13 @@
       border: 2px solid rgba(249, 250, 251, 0.2);
     }
 
+    /* ── 右側名單面板 ── */
     .names-panel {
-      width: 300px;
-      max-height: 520px;
+      width: 280px;
+      max-height: 560px;
       display: flex;
       flex-direction: column;
+      flex-shrink: 0;
       background: rgba(17, 24, 39, 0.95);
       border-radius: 20px;
       border: 1px solid rgba(31, 41, 55, 0.8);
@@ -258,21 +260,140 @@
       font-style: italic;
     }
 
-    @media (max-width: 900px) {
+    /* ── 左側未到名單面板 ── */
+    .absent-panel {
+      width: 300px;
+      flex-shrink: 0;
+      background: rgba(17, 24, 39, 0.95);
+      border-radius: 20px;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .absent-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(239, 68, 68, 0.3);
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(127, 29, 29, 0.35);
+      font-weight: 600;
+      color: #fca5a5;
+    }
+
+    .absent-header .absent-count {
+      background: rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .absent-list {
+      list-style: none;
+      margin: 0;
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 8px;
+    }
+
+    .absent-list li {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 8px;
+      font-size: 13px;
+      border-radius: 8px;
+      background: rgba(127, 29, 29, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+    }
+
+    .absent-list li:last-child {
+      border-bottom: none;
+    }
+
+    .absent-list li .a-no {
+      font-weight: 700;
+      color: #fca5a5;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .absent-list li .a-nm {
+      flex: 1;
+      color: #fef2f2;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .absent-list li .a-badge {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #f87171;
+      border-radius: 999px;
+      padding: 1px 5px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 1100px) {
       .app {
         flex-direction: column;
         gap: 24px;
         align-items: center;
       }
-      .names-panel {
+      .absent-panel, .names-panel {
         width: 100%;
-        max-width: 360px;
+        max-width: 400px;
       }
     }
   </style>
 </head>
 <body>
   <div class="app">
+    <!-- 左側：未到名單 -->
+    <div class="absent-panel">
+      <div class="absent-header">
+        <span>🚨 點名未到名單</span>
+        <span class="absent-count">22 人</span>
+      </div>
+      <ul class="absent-list">
+        <li><span class="a-no">001</span><span class="a-nm">詹壬翔</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">012</span><span class="a-nm">羅煜雁</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">013</span><span class="a-nm">杜昀倢</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">016</span><span class="a-nm">簡婕羚</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">017</span><span class="a-nm">林家伃</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">018</span><span class="a-nm">田娟妃</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">019</span><span class="a-nm">陳光原</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">021</span><span class="a-nm">林蔚嵐</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">022</span><span class="a-nm">蘇立峯</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">025</span><span class="a-nm">李育昇</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">026</span><span class="a-nm">應翰林</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">033</span><span class="a-nm">彭少廷</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">050</span><span class="a-nm">林紫恩</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">051</span><span class="a-nm">朱振豪</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">057</span><span class="a-nm">林均羲</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">058</span><span class="a-nm">潘友君</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">059</span><span class="a-nm">吳岑珊</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">060</span><span class="a-nm">黃仁杰</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">061</span><span class="a-nm">廖苡晴</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">065</span><span class="a-nm">王子昕</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">072</span><span class="a-nm">徐楷勝</span><span class="a-badge">(1)</span></li>
+        <li><span class="a-no">074</span><span class="a-nm">盧冠霖</span><span class="a-badge">(1)</span></li>
+      </ul>
+    </div>
+
+    <!-- 中間：輪盤 -->
     <div class="wheel-panel">
       <h1>🎯 點名輪盤</h1>
       <div class="hint">
@@ -293,6 +414,7 @@
       <div class="result" id="result">準備抽取...</div>
     </div>
 
+    <!-- 右側：出席名單 -->
     <div class="names-panel">
       <div class="names-header">
         <span>📋 1–74 號同學名單</span>
@@ -304,7 +426,6 @@
   </div>
 
   <script>
-    // 1–74 號名單（已整合）
     const students = [
       "詹○翔","陳○楦","吳○凱","莊○閎","謝○窈","黃○誼","林○儀","李○璇","蔡○希","張○綸",
       "陳○恩","羅○雁","杜○倢","吳○恩","陳○宸","簡○羚","林○伃","田○妃","陳○原","陳○甯",
@@ -319,7 +440,6 @@
     const COUNT = students.length;
     const RECENT_LIMIT = 5;
 
-    // DOM 元素
     const wheel = document.getElementById('wheel');
     const spinBtn = document.getElementById('spinBtn');
     const resetBtn = document.getElementById('resetBtn');
@@ -331,7 +451,6 @@
 
     const anglePer = 360 / COUNT;
 
-    // 產生輪盤數字（74格時字體更小但清晰）
     for (let i = 0; i < COUNT; i++) {
       const segment = document.createElement('div');
       segment.className = 'segment';
@@ -340,15 +459,13 @@
       const label = document.createElement('div');
       label.className = 'segment-label';
       label.textContent = i + 1;
-      
-      const hue = (i * 4.8) % 360; // 74格顏色漸變
+      const hue = (i * 4.8) % 360;
       label.style.color = `hsl(${hue}, 85%, 75%)`;
 
       segment.appendChild(label);
       wheel.appendChild(segment);
     }
 
-    // 產生右側名單
     countInfo.textContent = `${COUNT} 人`;
     students.forEach((name, index) => {
       const li = document.createElement('li');
@@ -383,9 +500,7 @@
       } while (recent.includes(n));
 
       recent.push(n);
-      if (recent.length > RECENT_LIMIT) {
-        recent.shift();
-      }
+      if (recent.length > RECENT_LIMIT) recent.shift();
       return n;
     }
 
@@ -397,7 +512,7 @@
 
     function spin() {
       if (isSpinning) return;
-      
+
       isSpinning = true;
       spinBtn.disabled = true;
       spinBtn.textContent = '轉動中…';
@@ -422,12 +537,9 @@
         result.innerHTML = `<strong>${chosen}號</strong><br>${chosenName}`;
         result.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2))';
         highlightName(chosen);
-        
-        // 自動滾動到被選中的人
+
         const activeLi = namesList.querySelector(`li[data-no="${chosen}"]`);
-        if (activeLi) {
-          activeLi.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+        if (activeLi) activeLi.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 4600);
     }
 
@@ -444,11 +556,9 @@
       spinBtn.textContent = '🎲 旋轉抽取';
     }
 
-    // 事件綁定
     spinBtn.addEventListener('click', spin);
     resetBtn.addEventListener('click', resetAll);
-    
-    // 測試：頁面載入完成後顯示就緒
+
     console.log('金銀輪盤載入完成，共', COUNT, '人');
   </script>
 </body>
