@@ -1,165 +1,339 @@
-
-<style>
-  .quiz-wrap { padding: 1.5rem 0; max-width: 640px; margin: 0 auto; }
-  .progress-bar-bg { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin-bottom: 2rem; }
-  .progress-bar-fill { height: 4px; background: var(--color-text-secondary); border-radius: 2px; transition: width 0.4s ease; }
-  .q-num { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 0.5rem; }
-  .q-text { font-size: 17px; font-weight: 500; color: var(--color-text-primary); line-height: 1.6; margin-bottom: 2rem; }
-  .btn-row { display: flex; gap: 12px; }
-  .btn-ans { flex: 1; padding: 14px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 15px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.1s; }
-  .btn-ans:hover { background: var(--color-background-secondary); }
-  .btn-ans:active { transform: scale(0.97); }
-  .btn-ans.selected-yes { background: #E6F1FB; border-color: #378ADD; color: #0C447C; }
-  .btn-ans.selected-no { background: #F1EFE8; border-color: #888780; color: #2C2C2A; }
-  .result-section { text-align: center; padding: 1rem 0; }
-  .score-ring { width: 120px; height: 120px; margin: 0 auto 1.5rem; position: relative; }
-  .score-ring svg { width: 120px; height: 120px; }
-  .score-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; font-weight: 500; color: var(--color-text-primary); }
-  .score-label { font-size: 12px; color: var(--color-text-tertiary); margin-top: 2px; }
-  .result-title { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.75rem; }
-  .result-desc { font-size: 15px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 2rem; }
-  .meter-row { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
-  .meter-label { font-size: 13px; color: var(--color-text-tertiary); width: 64px; text-align: right; }
-  .meter-bg { flex: 1; height: 8px; background: var(--color-border-tertiary); border-radius: 4px; overflow: hidden; }
-  .meter-fill { height: 8px; border-radius: 4px; transition: width 1s ease; }
-  .btn-restart { border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 10px 24px; font-size: 14px; color: var(--color-text-secondary); cursor: pointer; margin-top: 0.5rem; }
-  .btn-restart:hover { background: var(--color-background-secondary); }
-  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
-  .btn-nav { background: none; border: none; font-size: 13px; color: var(--color-text-tertiary); cursor: pointer; padding: 4px 0; }
-  .btn-nav:hover { color: var(--color-text-secondary); }
-  .badge { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 99px; margin-bottom: 1rem; }
-</style>
-
-<div class="quiz-wrap">
-  <h2 class="sr-only">i銝誨?曉?皜祇?嚗15憿??嚗????＊蝷箏??貉??文?蝯?</h2>
-  <div id="quiz-body"></div>
-</div>
-
-<script>
-const questions = [
-  { text: "?24撠??改?雿?西撠鈭?撠??冽?璈??唾??荔?", yesScore: true },
-  { text: "雿??箸??璈??冗蝢方?擃董??嚗?, yesScore: true },
-  { text: "雿??箄撌望???縑隞啁?鈭箏?嚗?, yesScore: false },
-  { text: "雿遛17甇脫?撌脩???擏??", yesScore: false },
-  { text: "雿??箏??批?憪餅?閰脣?瘜?嚗?, yesScore: true },
-  { text: "雿遛16甇脫????恍?蝎暸ㄡ??嚗??嗾???蝞?嚗?, yesScore: false },
-  { text: "雿??撟湔??虜?慦賢?嗅?嚗?, yesScore: false },
-  { text: "雿?銝剖飛??摮豢鋆∠車???臬?雿???鈭箸?西?????銝嚗?, yesScore: true },
-  { text: "雿?銝剖飛??瘥望???臬?質????勗漲嚗?, yesScore: false },
-  { text: "雿?銝剖飛?????摮豢???撌伐?", yesScore: false },
-  { text: "雿?血??犖?????刻??Ｗ???霅衣內?臬末銝餅?嚗蒂???見?賣?雿?蝬????荔?", yesScore: true },
-  { text: "雿?踵祥銝?函?瘣曉?嚗?, yesScore: true },
-  { text: "雿?行?之暻餃?瘜?嚗?, yesScore: true },
-  { text: "餈賣?銝????扳?瘝?憿?嚗?, yesScore: true },
-  { text: "雿?銝剖飛???臬蝬虜?死鋡怠蕭?乩蒂閬箏?撖?嚗?, yesScore: true },
-];
-
-const results = [
-  { range: [0, 3], label: "?喟絞銝誨", color: "#B4B2A9", fillColor: "#888780", desc: "雿??暑?孵???潸??蝯曹?隞??摨阡??????Ｗ??Ｖ??蝯梁?靽?隞亙?閬芾澈擃???瘣颯雿???雿??芣撌亙嚗??舐??賜??詨??? },
-  { range: [4, 7], label: "頝其?隞??皜∪?", color: "#85B7EB", fillColor: "#378ADD", desc: "雿????蝯梯??曆誨?鞈芥??賡?瘣餃?冽雿??曉祕銝?銋???嚗?賭澈???撣嗡??噶?抬?銋?憭勗鈭箄?鈭箔???撖衣?????? },
-  { range: [8, 11], label: "?亥?i銝誨", color: "#5DCAA5", fillColor: "#1D9E75", desc: "雿?閮勗?銵??摨血歇?貊鞎潸?i銝誨??蝧?冽?璈???憭?霅圈????暹?摨佗?銝虫??冽雿憓葉?芸?暑?? },
-  { range: [12, 15], label: "?詨?i銝誨", color: "#AFA9EC", fillColor: "#7F77DD", desc: "雿?撣詨??i銝誨嚗?批???撟曆??臭??辣隡賂?蝷曄黎慦??臭??冗鈭文??雿??犖?芰???像蝑?撘瑞?隤?嚗????航???唳雿?隞?葆靘?摮斤?? },
-];
-
-let answers = new Array(15).fill(null);
-let current = 0;
-
-function getResult(score) {
-  return results.find(r => score >= r.range[0] && score <= r.range[1]);
-}
-
-function calcScore() {
-  return questions.reduce((sum, q, i) => {
-    const ans = answers[i];
-    if (ans === null) return sum;
-    if (q.yesScore && ans === 'yes') return sum + 1;
-    if (!q.yesScore && ans === 'no') return sum + 1;
-    return sum;
-  }, 0);
-}
-
-function renderQuiz() {
-  const el = document.getElementById('quiz-body');
-  const answered = answers.filter(a => a !== null).length;
-  const pct = (answered / 15) * 100;
-
-  if (answered === 15) {
-    renderResult();
-    return;
-  }
-
-  const q = questions[current];
-  el.innerHTML = `
-    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-    <p class="q-num">蝚?${current + 1} 憿???15 憿?/p>
-    <p class="q-text">${q.text}</p>
-    <div class="btn-row">
-      <button class="btn-ans ${answers[current]==='yes'?'selected-yes':''}" onclick="answer('yes')">??/button>
-      <button class="btn-ans ${answers[current]==='no'?'selected-no':''}" onclick="answer('no')">??/button>
-    </div>
-    <div class="nav-row">
-      <button class="btn-nav" onclick="goTo(${current-1})" ${current===0?'style="visibility:hidden"':''}>??銝?憿?/button>
-      <button class="btn-nav" onclick="goTo(${current+1})" ${answers[current]===null||current===14?'style="visibility:hidden"':''}>銝?憿???/button>
-    </div>
-  `;
-}
-
-function answer(val) {
-  answers[current] = val;
-  if (current < 14) {
-    setTimeout(() => { current++; renderQuiz(); }, 180);
-  } else {
-    setTimeout(() => renderQuiz(), 180);
-  }
-}
-
-function goTo(idx) {
-  if (idx < 0 || idx > 14) return;
-  current = idx;
-  renderQuiz();
-}
-
-function renderResult() {
-  const score = calcScore();
-  const r = getResult(score);
-  const pct = (score / 15) * 100;
-  const circumference = 2 * Math.PI * 50;
-  const dash = (pct / 100) * circumference;
-
-  document.getElementById('quiz-body').innerHTML = `
-    <div class="result-section">
-      <div class="score-ring">
-        <svg viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="50" fill="none" stroke="var(--color-border-tertiary)" stroke-width="8"/>
-          <circle cx="60" cy="60" r="50" fill="none" stroke="${r.fillColor}" stroke-width="8"
-            stroke-dasharray="${dash} ${circumference}" stroke-dashoffset="${circumference * 0.25}"
-            stroke-linecap="round" transform="rotate(0 60 60)"/>
-        </svg>
-        <div class="score-num">${score}</div>
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>你有多 i 世代？</title>
+  <script type="text/javascript" nonce="e4c2302e9a4247bab906b99e2b6" src="//local.adguard.org?ts=1777902324454&amp;type=content-script&amp;dmn=ppl-ai-code-interpreter-files.s3.amazonaws.com&amp;url=https%3A%2F%2Fppl-ai-code-interpreter-files.s3.amazonaws.com%2Fweb%2Fdirect-files%2F7f4fcc0e4fffd6b7ed25d478bbadd6e5%2F72eefad8-75ff-4a9d-9fd1-6dfe0becfdc5%2Ff571a26a.html%3Fresponse-content-disposition%3Dattachment%253B%2520filename%253D%2522file.html%2522%253B%2520filename%252A%253DUTF-8%2527%2527i%2525E4%2525B8%252596%2525E4%2525BB%2525A3%2525E6%2525B8%2525AC%2525E9%2525A9%252597%2525E7%2525B6%2525B2%2525E9%2525A0%252581.html%26AWSAccessKeyId%3DASIA2F3EMEYEZ4K6335X%26Signature%3Dz5FEGqeCxaBt5HjRy8cbFBP2loU%253D%26x-amz-security-token%3DIQoJb3JpZ2luX2VjEKb%252F%252F%252F%252F%252F%252F%252F%252F%252F%252FwEaCXVzLWVhc3QtMSJGMEQCIBWMUSw%252F2hXwQ2nPkmIbG8w62tyYBhczGlbssu16YIYIAiAUUnxpOoN3wRtEOWO8faTZAUg%252B2RPPYwsdORbMlHKbySrzBAhuEAEaDDY5OTc1MzMwOTcwNSIMmVb9dXs6aHs6EeN9KtAEL%252BhnsqKM5VQfInyK44fEuAmATX7gGxoDRpMwJumZUC9Jo0Ot5R04QRklDKf3PgqmGKf5eLAT8FxK9k8AyIXKtVQ9M3vf4JY1gfZhzEGvnRwMtgn%252F9F434c40Wa%252Fh5CeXdrVOIlC0vKrtLqTS7%252B820wSWuBzkzri%252Bz6xsmC44DsPr4t9Mkz%252B1Iq3sle1%252BmsKzKgDYOdP1lyQw3yECQ%252FpZlK%252BzzJNZ5pRhZhy31m4ZFsZhOK75r5fSIT7amI422eI%252ByR%252FJ%252B4G38NQSwOoLnYsqNRZeIUb792HYC%252F%252FjWt6y9Mumi97a4cg5IcvE5KkzxCuxwV3AKdGZE%252FsFsAp79XIf4Vuw3TkY7h79BEGOa9y7VH4SL0zf5DfRFGQbPiXBqj5rTXvASVZj6KCzg0xrVjphVq%252BAC1baxKSWzkvVXV%252BNBp6JwFXnJE7APkZgBs0KGn7EVOjxHXru4a2a3Wp%252FGR3hiVp1Nyz62uB6du91fcZTNJB3Hcv3Z%252BPUjfZBT3M9xkU6SPLndmphcs4%252BlvfZIn2ey0%252BgmaeFZbnCWuSEhKk%252BHI7hZDa5RA2UOP9qOUvNIF5PJ2d%252FYOe5614ERZe7pV4gqil2U3MDtoMR7cWCkNyYAVX8VWqzkAYjyVPL0EeoAIBa6E3ZGs17Y%252BMoGMWmrmNWQFFvPp%252FVdioWxWo%252Fc5Sd%252FQ7LCHT2gjIAMvqXygPkBx3tq1PT0knf0KdYw35RCBF1Mbt0vARX%252FiB9U8mj%252FJapsgCYMA2xxkslwlpgLqB89PWr8hVnI2cLVMu9MxOcGjbwZzDcueLPBjqZAQEr%252BK0%252FTYvZNnlRSqjKQ0IO%252BnqxxxvGkmbtaykmKJSqTYcaiWpnsjLuSvInrdoEA1IMLJab%252BdivWC1FxiUJqL1Uu8VdLir7ZXODizjV8ps2nZQa0Xo4D5mwRrYi6L%252BM74dpuDukBkcIE8D7%252B4SpjeHX7J7cPlm7DNacsCbPrIMmHSBH0mvcZfAaAIRvRPolIiVCWUeX40%252BUGg%253D%253D%26Expires%3D1777903819&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="e4c2302e9a4247bab906b99e2b6" src="//local.adguard.org?ts=1777902324454&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+      --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+      --space-12: 3rem; --space-16: 4rem; --space-20: 5rem;
+      --color-bg: #f7f6f2;
+      --color-surface: #fbfbf9;
+      --color-surface-2: #f1efe9;
+      --color-border: #d8d3ca;
+      --color-text: #25221d;
+      --color-text-muted: #6f6a62;
+      --color-primary: #01696f;
+      --color-primary-hover: #0c4e54;
+      --color-primary-soft: #d8ece9;
+      --color-success: #437a22;
+      --color-warning: #964219;
+      --color-shadow: 0 16px 40px rgba(37,34,29,.08);
+      --radius-sm: 0.5rem; --radius-md: 0.875rem; --radius-lg: 1.25rem; --radius-full: 999px;
+      --font-body: 'Noto Sans TC', system-ui, sans-serif;
+      --font-display: 'Noto Sans TC', system-ui, sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614;
+      --color-surface: #1d1c19;
+      --color-surface-2: #262420;
+      --color-border: #3a3731;
+      --color-text: #ece8df;
+      --color-text-muted: #b3aea4;
+      --color-primary: #66a9b1;
+      --color-primary-hover: #8ac3ca;
+      --color-primary-soft: #24383a;
+      --color-success: #85be5d;
+      --color-warning: #d98e5a;
+      --color-shadow: 0 16px 40px rgba(0,0,0,.35);
+    }
+    *,:before,:after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:none;text-size-adjust:none;scroll-behavior:smooth}
+    body{
+      min-height:100vh; font-family:var(--font-body); font-size:var(--text-base); line-height:1.65;
+      color:var(--color-text); background:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--color-primary) 10%, transparent), transparent 28%),
+      linear-gradient(180deg, var(--color-bg), color-mix(in srgb, var(--color-surface-2) 75%, var(--color-bg)));
+    }
+    button,input{font:inherit}
+    .skip-link{position:absolute;left:-999px;top:auto}.skip-link:focus{left:1rem;top:1rem;background:var(--color-primary);color:#fff;padding:.5rem .75rem;border-radius:.5rem;z-index:10}
+    .shell{max-width:1100px;margin:0 auto;padding:var(--space-6) var(--space-4) var(--space-16)}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:var(--space-4);margin-bottom:var(--space-8)}
+    .brand{display:flex;align-items:center;gap:var(--space-3)}
+    .logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--color-primary),color-mix(in srgb, var(--color-primary) 55%, white));display:grid;place-items:center;box-shadow:var(--color-shadow)}
+    .logo svg{width:22px;height:22px;color:white}
+    .brand strong{display:block;font-size:var(--text-sm)}
+    .brand span{display:block;font-size:var(--text-xs);color:var(--color-text-muted)}
+    .theme-toggle{min-width:44px;min-height:44px;padding:.65rem;border-radius:999px;border:1px solid color-mix(in srgb, var(--color-text) 12%, transparent);background:var(--color-surface);color:var(--color-text);box-shadow:var(--color-shadow)}
+    .hero{display:grid;grid-template-columns:1.15fr .85fr;gap:var(--space-6);align-items:stretch;margin-bottom:var(--space-8)}
+    .panel{background:color-mix(in srgb, var(--color-surface) 88%, transparent);border:1px solid color-mix(in srgb, var(--color-text) 10%, transparent);border-radius:var(--radius-lg);box-shadow:var(--color-shadow);backdrop-filter:blur(12px)}
+    .hero-copy{padding:clamp(1.5rem, 3vw, 3rem)}
+    .eyebrow{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem .75rem;border-radius:var(--radius-full);background:var(--color-primary-soft);color:var(--color-primary);font-size:var(--text-xs);font-weight:700;letter-spacing:.04em}
+    h1{font-family:var(--font-display);font-size:var(--text-2xl);line-height:1.08;margin:var(--space-4) 0 var(--space-4)}
+    .hero p{max-width:62ch;color:var(--color-text-muted)}
+    .hero-side{padding:var(--space-6);display:grid;gap:var(--space-4);align-content:start}
+    .score-card{padding:var(--space-5);border-radius:var(--radius-md);background:var(--color-surface-2);border:1px solid color-mix(in srgb, var(--color-text) 8%, transparent)}
+    .score-card .label{font-size:var(--text-sm);color:var(--color-text-muted)}
+    .score{font-size:clamp(2.25rem, 5vw, 4.5rem);font-weight:900;line-height:1;color:var(--color-primary);margin:.35rem 0}
+    .meter{height:12px;background:color-mix(in srgb, var(--color-text) 8%, transparent);border-radius:999px;overflow:hidden}
+    .meter > span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--color-primary),color-mix(in srgb, var(--color-primary) 65%, white));border-radius:999px;transition:width .35s ease}
+    .legend{display:grid;gap:.5rem;font-size:var(--text-xs);color:var(--color-text-muted)}
+    .actions{display:flex;flex-wrap:wrap;gap:var(--space-3);margin-top:var(--space-3)}
+    .btn{min-height:44px;padding:.85rem 1.1rem;border-radius:999px;border:none;cursor:pointer;transition:.2s ease;display:inline-flex;align-items:center;justify-content:center;gap:.5rem}
+    .btn-primary{background:var(--color-primary);color:#fff}.btn-primary:hover{background:var(--color-primary-hover)}
+    .btn-secondary{background:var(--color-surface);color:var(--color-text);border:1px solid color-mix(in srgb, var(--color-text) 12%, transparent)}
+    .quiz{display:grid;gap:var(--space-4)}
+    .question{padding:var(--space-5);display:grid;gap:var(--space-4)}
+    .question header{display:flex;gap:var(--space-4);align-items:flex-start}
+    .num{flex:0 0 auto;width:2.25rem;height:2.25rem;border-radius:999px;background:var(--color-primary-soft);color:var(--color-primary);display:grid;place-items:center;font-weight:800;font-size:var(--text-sm)}
+    .qtext{font-size:var(--text-lg);font-weight:700;line-height:1.35}
+    .score-hint{font-size:var(--text-xs);color:var(--color-text-muted)}
+    .choices{display:flex;gap:var(--space-3);flex-wrap:wrap}
+    .choice{position:relative}
+    .choice input{position:absolute;opacity:0;inset:0}
+    .choice label{min-width:112px;min-height:48px;padding:.85rem 1rem;border-radius:999px;border:1px solid color-mix(in srgb, var(--color-text) 12%, transparent);display:flex;align-items:center;justify-content:center;background:var(--color-surface-2);font-weight:700;cursor:pointer;transition:.18s ease}
+    .choice input:checked + label{background:var(--color-primary);color:#fff;border-color:var(--color-primary);transform:translateY(-1px)}
+    .choice input:focus-visible + label{outline:2px solid var(--color-primary);outline-offset:3px}
+    .result{padding:var(--space-6);display:grid;gap:var(--space-4);position:sticky;bottom:var(--space-4)}
+    .result h2{font-size:var(--text-xl);line-height:1.15}
+    .badge{display:inline-flex;width:max-content;padding:.45rem .8rem;border-radius:999px;background:var(--color-primary-soft);color:var(--color-primary);font-size:var(--text-xs);font-weight:800;letter-spacing:.04em}
+    .result p{color:var(--color-text-muted)}
+    .result ul{padding-left:1.2rem;color:var(--color-text-muted);display:grid;gap:.35rem}
+    .result strong{color:var(--color-text)}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:var(--space-6);align-items:start}
+    .footer-note{margin-top:var(--space-8);font-size:var(--text-xs);color:var(--color-text-muted)}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media (max-width: 900px){
+      .hero,.layout{grid-template-columns:1fr}
+      .result{position:static}
+    }
+    @media (prefers-reduced-motion: reduce){
+      *{scroll-behavior:auto !important;transition:none !important}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到內容</a>
+  <div class="shell">
+    <header class="topbar" aria-label="頁首工具列">
+      <div class="brand" aria-label="i世代測驗標誌">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3v18"></path><path d="M8 7h8"></path><path d="M8 17h8"></path>
+          </svg>
+        </div>
+        <div>
+          <strong>你有多 i 世代？</strong>
+          <span>15 題互動測驗網頁</span>
+        </div>
       </div>
-      <p style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:1rem;">皛踹? 15 ??/p>
-      <div class="badge" style="background:${r.color}22;color:${r.fillColor};border:0.5px solid ${r.color};">${r.label}</div>
-      <p class="result-title">${r.label}</p>
-      <p class="result-desc">${r.desc}</p>
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="切換深色模式">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+    </header>
 
-      <div style="text-align:left;margin-bottom:2rem;">
-        <p style="font-size:13px;color:var(--color-text-tertiary);margin-bottom:1rem;">??隞?????/p>
-        <div class="meter-row"><span class="meter-label">?喟絞銝誨</span><div class="meter-bg"><div class="meter-fill" style="width:${score<=3?Math.max(8,score/3*100):8}%;background:#888780;"></div></div><span style="font-size:12px;color:var(--color-text-tertiary);">0??</span></div>
-        <div class="meter-row"><span class="meter-label">?腹??/span><div class="meter-bg"><div class="meter-fill" style="width:${score>=4&&score<=7?Math.max(8,(score-3)/4*100):score>7?100:8}%;background:#378ADD;"></div></div><span style="font-size:12px;color:var(--color-text-tertiary);">4??</span></div>
-        <div class="meter-row"><span class="meter-label">?亥?i銝誨</span><div class="meter-bg"><div class="meter-fill" style="width:${score>=8&&score<=11?Math.max(8,(score-7)/4*100):score>11?100:8}%;background:#1D9E75;"></div></div><span style="font-size:12px;color:var(--color-text-tertiary);">8??1</span></div>
-        <div class="meter-row"><span class="meter-label">?詨?i銝誨</span><div class="meter-bg"><div class="meter-fill" style="width:${score>=12?Math.max(8,(score-11)/4*100):8}%;background:#7F77DD;"></div></div><span style="font-size:12px;color:var(--color-text-tertiary);">12??5</span></div>
-      </div>
+    <main id="main">
+      <section class="hero">
+        <div class="panel hero-copy">
+          <span class="eyebrow">YES / NO GENERATION QUIZ</span>
+          <h1>回答 15 題，看看你的行為、態度與觀念有多接近 i 世代。</h1>
+          <p>每題只要選「是」或「否」，系統會自動累計分數，並在完成後顯示你的結果判讀。這是一個偏向互動展示的自評工具，不是正式心理測驗。</p>
+          <div class="actions">
+            <button class="btn btn-primary" type="button" id="scrollStart">開始作答</button>
+            <button class="btn btn-secondary" type="button" id="autoCheck">檢查是否完成</button>
+          </div>
+        </div>
+        <aside class="panel hero-side" aria-label="計分說明">
+          <div class="score-card">
+            <div class="label">目前分數</div>
+            <div class="score"><span id="scoreNow">0</span><span style="font-size:var(--text-lg);font-weight:700;color:var(--color-text-muted)"> / 15</span></div>
+            <div class="meter" aria-hidden="true"><span id="meterBar"></span></div>
+          </div>
+          <div class="legend">
+            <div>第 1、2、5、8、11、12、13、14、15 題：答「是」得 1 分。</div>
+            <div>第 3、4、6、7、9、10 題：答「否」得 1 分。</div>
+            <div>分數越高，越趨近 i 世代。</div>
+          </div>
+        </aside>
+      </section>
 
-      <button class="btn-restart" onclick="restart()">?皜祇?</button>
-    </div>
-  `;
-}
+      <section class="layout">
+        <form class="quiz" id="quizForm" novalidate>
+        </form>
 
-function restart() {
-  answers = new Array(15).fill(null);
-  current = 0;
-  renderQuiz();
-}
+        <aside class="panel result" aria-live="polite" aria-atomic="true">
+          <span class="badge">結果判讀</span>
+          <h2 id="resultTitle">尚未完成作答</h2>
+          <p id="resultText">請先完成 15 題，系統會顯示總分與對應的傾向說明。</p>
+          <ul>
+            <li><strong>0–5 分：</strong>較不趨近 i 世代</li>
+            <li><strong>6–10 分：</strong>部分特徵接近 i 世代</li>
+            <li><strong>11–15 分：</strong>明顯趨近 i 世代</li>
+          </ul>
+          <div class="actions">
+            <button class="btn btn-primary" type="button" id="finishBtn">完成並判定</button>
+            <button class="btn btn-secondary" type="reset" form="quizForm" id="resetBtn">重新作答</button>
+          </div>
+        </aside>
+      </section>
 
-renderQuiz();
-</script>
+      <p class="footer-note">題目與計分邏輯依照你提供的 15 題內容製作；其中 i 世代測驗的相同計分說明也可見於《Cheers》整理的文章與英文版題目說明。</p>
+    </main>
+  </div>
+
+  <script>
+    const questions = [
+      '過去24小時內，你是否至少用了1小時在手機上傳訊息？',
+      '你有智慧型手機上的社群軟體帳號嗎？',
+      '你認為自己是有宗教信仰的人嗎？',
+      '你滿17歲時已經擁有駕照嗎？',
+      '你認為同性婚姻應該合法嗎？',
+      '你滿16歲時喝過含酒精飲料嗎（小啜幾口不算）？',
+      '你在青少年時期常和爸媽吵架嗎？',
+      '你上中學時，學校裡種族背景和你不同的人是否超過三分之一？',
+      '你上中學時，每個週末晚上是否都與朋友共度？',
+      '你上中學時，有沒有在學期間打工？',
+      '你是否同意人際間的安全距離及預先警示是好主意，並同意這樣能減低不經意的冒犯？',
+      '你在政治上是獨立派嗎？',
+      '你是否支持大麻合法化？',
+      '追求不涉感情的性愛沒問題嗎？',
+      '你上中學時，是否經常感覺被忽略並覺得寂寞？'
+    ];
+
+    const yesPoint = new Set([1,2,5,8,11,12,13,14,15]);
+    const noPoint = new Set([3,4,6,7,9,10]);
+
+    const form = document.getElementById('quizForm');
+    const scoreNow = document.getElementById('scoreNow');
+    const meterBar = document.getElementById('meterBar');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultText = document.getElementById('resultText');
+
+    questions.forEach((q, i) => {
+      const index = i + 1;
+      const scoreHint = yesPoint.has(index) ? '本題答「是」得 1 分' : '本題答「否」得 1 分';
+      const card = document.createElement('section');
+      card.className = 'panel question';
+      card.innerHTML = `
+        <header>
+          <div class="num">${index}</div>
+          <div>
+            <div class="qtext">${q}</div>
+            <div class="score-hint">${scoreHint}</div>
+          </div>
+        </header>
+        <fieldset>
+          <legend class="sr-only">第 ${index} 題作答</legend>
+          <div class="choices">
+            <div class="choice">
+              <input type="radio" id="q${index}-yes" name="q${index}" value="yes">
+              <label for="q${index}-yes">是</label>
+            </div>
+            <div class="choice">
+              <input type="radio" id="q${index}-no" name="q${index}" value="no">
+              <label for="q${index}-no">否</label>
+            </div>
+          </div>
+        </fieldset>
+      `;
+      form.appendChild(card);
+    });
+
+    function getAnswers() {
+      return questions.map((_, i) => {
+        const idx = i + 1;
+        const checked = form.querySelector(`input[name="q${idx}"]:checked`);
+        return checked ? checked.value : null;
+      });
+    }
+
+    function calculateScore() {
+      const answers = getAnswers();
+      let score = 0;
+      answers.forEach((value, i) => {
+        const idx = i + 1;
+        if (yesPoint.has(idx) && value === 'yes') score += 1;
+        if (noPoint.has(idx) && value === 'no') score += 1;
+      });
+      return { score, completed: answers.every(Boolean), answered: answers.filter(Boolean).length };
+    }
+
+    function renderStatus() {
+      const { score, completed, answered } = calculateScore();
+      scoreNow.textContent = score;
+      meterBar.style.width = `${(score / 15) * 100}%`;
+
+      if (!completed) {
+        resultTitle.textContent = `目前已完成 ${answered} / 15 題`;
+        resultText.textContent = '請繼續完成所有題目；完成後按下「完成並判定」即可看到你的傾向結果。';
+        return;
+      }
+
+      applyResult(score);
+    }
+
+    function applyResult(score) {
+      if (score <= 5) {
+        resultTitle.textContent = `你的總分是 ${score} 分：較不趨近 i 世代`;
+        resultText.textContent = '你的生活經驗、價值觀與行為模式，與這份測驗定義的 i 世代重疊相對較少。';
+      } else if (score <= 10) {
+        resultTitle.textContent = `你的總分是 ${score} 分：部分特徵接近 i 世代`;
+        resultText.textContent = '你與 i 世代有明顯交集，但不是全面重疊，屬於中間偏近的類型。';
+      } else {
+        resultTitle.textContent = `你的總分是 ${score} 分：明顯趨近 i 世代`;
+        resultText.textContent = '你的答題型態在行為、態度與觀念上，和這份測驗所描述的 i 世代特徵相當接近。';
+      }
+    }
+
+    form.addEventListener('change', renderStatus);
+    form.addEventListener('reset', () => {
+      requestAnimationFrame(() => {
+        scoreNow.textContent = '0';
+        meterBar.style.width = '0%';
+        resultTitle.textContent = '尚未完成作答';
+        resultText.textContent = '請先完成 15 題，系統會顯示總分與對應的傾向說明。';
+      });
+    });
+
+    document.getElementById('finishBtn').addEventListener('click', () => {
+      const { score, completed } = calculateScore();
+      if (!completed) {
+        renderStatus();
+        const firstMissing = [...form.querySelectorAll('fieldset')].find((fs, i) => !form.querySelector(`input[name="q${i+1}"]:checked`));
+        if (firstMissing) firstMissing.closest('.question').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      applyResult(score);
+      document.querySelector('.result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    document.getElementById('scrollStart').addEventListener('click', () => {
+      form.querySelector('.question')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.getElementById('autoCheck').addEventListener('click', renderStatus);
+
+    (function(){
+      const button = document.querySelector('[data-theme-toggle]');
+      const root = document.documentElement;
+      let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      root.setAttribute('data-theme', theme);
+      const renderIcon = () => {
+        button.innerHTML = theme === 'dark'
+          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>'
+          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+        button.setAttribute('aria-label', theme === 'dark' ? '切換淺色模式' : '切換深色模式');
+      };
+      renderIcon();
+      button.addEventListener('click', () => {
+        theme = theme === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', theme);
+        renderIcon();
+      });
+    })();
+
+    renderStatus();
+  </script>
+</body>
+</html>
