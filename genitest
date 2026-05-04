@@ -1,0 +1,165 @@
+
+<style>
+  .quiz-wrap { padding: 1.5rem 0; max-width: 640px; margin: 0 auto; }
+  .progress-bar-bg { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin-bottom: 2rem; }
+  .progress-bar-fill { height: 4px; background: var(--color-text-secondary); border-radius: 2px; transition: width 0.4s ease; }
+  .q-num { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 0.5rem; }
+  .q-text { font-size: 17px; font-weight: 500; color: var(--color-text-primary); line-height: 1.6; margin-bottom: 2rem; }
+  .btn-row { display: flex; gap: 12px; }
+  .btn-ans { flex: 1; padding: 14px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 15px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.1s; }
+  .btn-ans:hover { background: var(--color-background-secondary); }
+  .btn-ans:active { transform: scale(0.97); }
+  .btn-ans.selected-yes { background: #E6F1FB; border-color: #378ADD; color: #0C447C; }
+  .btn-ans.selected-no { background: #F1EFE8; border-color: #888780; color: #2C2C2A; }
+  .result-section { text-align: center; padding: 1rem 0; }
+  .score-ring { width: 120px; height: 120px; margin: 0 auto 1.5rem; position: relative; }
+  .score-ring svg { width: 120px; height: 120px; }
+  .score-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; font-weight: 500; color: var(--color-text-primary); }
+  .score-label { font-size: 12px; color: var(--color-text-tertiary); margin-top: 2px; }
+  .result-title { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.75rem; }
+  .result-desc { font-size: 15px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 2rem; }
+  .meter-row { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+  .meter-label { font-size: 13px; color: var(--color-text-tertiary); width: 64px; text-align: right; }
+  .meter-bg { flex: 1; height: 8px; background: var(--color-border-tertiary); border-radius: 4px; overflow: hidden; }
+  .meter-fill { height: 8px; border-radius: 4px; transition: width 1s ease; }
+  .btn-restart { border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 10px 24px; font-size: 14px; color: var(--color-text-secondary); cursor: pointer; margin-top: 0.5rem; }
+  .btn-restart:hover { background: var(--color-background-secondary); }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
+  .btn-nav { background: none; border: none; font-size: 13px; color: var(--color-text-tertiary); cursor: pointer; padding: 4px 0; }
+  .btn-nav:hover { color: var(--color-text-secondary); }
+  .badge { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 99px; margin-bottom: 1rem; }
+</style>
+
+<div class="quiz-wrap">
+  <h2 class="sr-only">i銝誨?曉?皜祇?嚗15憿??嚗????＊蝷箏??貉??文?蝯?</h2>
+  <div id="quiz-body"></div>
+</div>
+
+<script>
+const questions = [
+  { text: "?24撠??改?雿?西撠鈭?撠??冽?璈??唾??荔?", yesScore: true },
+  { text: "雿??箸??璈??冗蝢方?擃董??嚗?, yesScore: true },
+  { text: "雿??箄撌望???縑隞啁?鈭箏?嚗?, yesScore: false },
+  { text: "雿遛17甇脫?撌脩???擏??", yesScore: false },
+  { text: "雿??箏??批?憪餅?閰脣?瘜?嚗?, yesScore: true },
+  { text: "雿遛16甇脫????恍?蝎暸ㄡ??嚗??嗾???蝞?嚗?, yesScore: false },
+  { text: "雿??撟湔??虜?慦賢?嗅?嚗?, yesScore: false },
+  { text: "雿?銝剖飛??摮豢鋆∠車???臬?雿???鈭箸?西?????銝嚗?, yesScore: true },
+  { text: "雿?銝剖飛??瘥望???臬?質????勗漲嚗?, yesScore: false },
+  { text: "雿?銝剖飛?????摮豢???撌伐?", yesScore: false },
+  { text: "雿?血??犖?????刻??Ｗ???霅衣內?臬末銝餅?嚗蒂???見?賣?雿?蝬????荔?", yesScore: true },
+  { text: "雿?踵祥銝?函?瘣曉?嚗?, yesScore: true },
+  { text: "雿?行?之暻餃?瘜?嚗?, yesScore: true },
+  { text: "餈賣?銝????扳?瘝?憿?嚗?, yesScore: true },
+  { text: "雿?銝剖飛???臬蝬虜?死鋡怠蕭?乩蒂閬箏?撖?嚗?, yesScore: true },
+];
+
+const results = [
+  { range: [0, 3], label: "?喟絞銝誨", color: "#B4B2A9", fillColor: "#888780", desc: "雿??暑?孵???潸??蝯曹?隞??摨阡??????Ｗ??Ｖ??蝯梁?靽?隞亙?閬芾澈擃???瘣颯雿???雿??芣撌亙嚗??舐??賜??詨??? },
+  { range: [4, 7], label: "頝其?隞??皜∪?", color: "#85B7EB", fillColor: "#378ADD", desc: "雿????蝯梯??曆誨?鞈芥??賡?瘣餃?冽雿??曉祕銝?銋???嚗?賭澈???撣嗡??噶?抬?銋?憭勗鈭箄?鈭箔???撖衣?????? },
+  { range: [8, 11], label: "?亥?i銝誨", color: "#5DCAA5", fillColor: "#1D9E75", desc: "雿?閮勗?銵??摨血歇?貊鞎潸?i銝誨??蝧?冽?璈???憭?霅圈????暹?摨佗?銝虫??冽雿憓葉?芸?暑?? },
+  { range: [12, 15], label: "?詨?i銝誨", color: "#AFA9EC", fillColor: "#7F77DD", desc: "雿?撣詨??i銝誨嚗?批???撟曆??臭??辣隡賂?蝷曄黎慦??臭??冗鈭文??雿??犖?芰???像蝑?撘瑞?隤?嚗????航???唳雿?隞?葆靘?摮斤?? },
+];
+
+let answers = new Array(15).fill(null);
+let current = 0;
+
+function getResult(score) {
+  return results.find(r => score >= r.range[0] && score <= r.range[1]);
+}
+
+function calcScore() {
+  return questions.reduce((sum, q, i) => {
+    const ans = answers[i];
+    if (ans === null) return sum;
+    if (q.yesScore && ans === 'yes') return sum + 1;
+    if (!q.yesScore && ans === 'no') return sum + 1;
+    return sum;
+  }, 0);
+}
+
+function renderQuiz() {
+  const el = document.getElementById('quiz-body');
+  const answered = answers.filter(a => a !== null).length;
+  const pct = (answered / 15) * 100;
+
+  if (answered === 15) {
+    renderResult();
+    return;
+  }
+
+  const q = questions[current];
+  el.innerHTML = `
+    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+    <p class="q-num">蝚?${current + 1} 憿???15 憿?/p>
+    <p class="q-text">${q.text}</p>
+    <div class="btn-row">
+      <button class="btn-ans ${answers[current]==='yes'?'selected-yes':''}" onclick="answer('yes')">??/button>
+      <button class="btn-ans ${answers[current]==='no'?'selected-no':''}" onclick="answer('no')">??/button>
+    </div>
+    <div class="nav-row">
+      <button class="btn-nav" onclick="goTo(${current-1})" ${current===0?'style="visibility:hidden"':''}>??銝?憿?/button>
+      <button class="btn-nav" onclick="goTo(${current+1})" ${answers[current]===null||current===14?'style="visibility:hidden"':''}>銝?憿???/button>
+    </div>
+  `;
+}
+
+function answer(val) {
+  answers[current] = val;
+  if (current < 14) {
+    setTimeout(() => { current++; renderQuiz(); }, 180);
+  } else {
+    setTimeout(() => renderQuiz(), 180);
+  }
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx > 14) return;
+  current = idx;
+  renderQuiz();
+}
+
+function renderResult() {
+  const score = calcScore();
+  const r = getResult(score);
+  const pct = (score / 15) * 100;
+  const circumference = 2 * Math.PI * 50;
+  const dash = (pct / 100) * circumference;
+
+  document.getElementById('quiz-body').innerHTML = `
+    <div class="result-section">
+      <div class="score-ring">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="var(--color-border-tertiary)" stroke-width="8"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="${r.fillColor}" stroke-width="8"
+            stroke-dasharray="${dash} ${circumference}" stroke-dashoffset="${circumference * 0.25}"
+            stroke-linecap="round" transform="rotate(0 60 60)"/>
+        </svg>
+        <div class="score-num">${score}</div>
+      </div>
+      <p style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:1rem;">皛踹? 15 ??/p>
+      <div class="badge" style="background:${r.color}22;color:${r.fillColor};border:0.5px solid ${r.color};">${r.label}</div>
+      <p class="result-title">${r.label}</p>
+      <p class="result-desc">${r.desc}</p>
+
+      <div style="text-align:left;margin-bottom:2rem;">
+        <p style="font-size:13px;color:var(--color-text-tertiary);margin-bottom:1rem;">??隞?????/p>
+        <div class="meter-row"><span class="meter-label">?喟絞銝誨</span><div class="meter-bg"><div class="meter-fill" style="width:${score<=3?Math.max(8,score/3*100):8}%;background:#888780;"></div></div><span style="font-size:12px;color:var(--color-text-tertiary);">0??</span></div>
+        <div class="meter-row"><span class="meter-label">?腹??/span><div class="meter-bg"><div class="meter-fill" style="width:${score>=4&&score<=7?Math.max(8,(score-3)/4*100):score>7?100:8}%;background:#378ADD;"></div></div><span style="font-size:12px;color:var(--color-text-tertiary);">4??</span></div>
+        <div class="meter-row"><span class="meter-label">?亥?i銝誨</span><div class="meter-bg"><div class="meter-fill" style="width:${score>=8&&score<=11?Math.max(8,(score-7)/4*100):score>11?100:8}%;background:#1D9E75;"></div></div><span style="font-size:12px;color:var(--color-text-tertiary);">8??1</span></div>
+        <div class="meter-row"><span class="meter-label">?詨?i銝誨</span><div class="meter-bg"><div class="meter-fill" style="width:${score>=12?Math.max(8,(score-11)/4*100):8}%;background:#7F77DD;"></div></div><span style="font-size:12px;color:var(--color-text-tertiary);">12??5</span></div>
+      </div>
+
+      <button class="btn-restart" onclick="restart()">?皜祇?</button>
+    </div>
+  `;
+}
+
+function restart() {
+  answers = new Array(15).fill(null);
+  current = 0;
+  renderQuiz();
+}
+
+renderQuiz();
+</script>
