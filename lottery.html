@@ -1,195 +1,589 @@
-
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>課堂點名 1–74 旋轉輪盤</title>
 <style>
-  .quiz-wrap { padding: 1.5rem 0; max-width: 640px; margin: 0 auto; }
-  .progress-bar-bg { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin-bottom: 2rem; }
-  .progress-bar-fill { height: 4px; background: var(--color-text-secondary); border-radius: 2px; transition: width 0.4s ease; }
-  .q-num { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 0.5rem; }
-  .q-text { font-size: 17px; font-weight: 500; color: var(--color-text-primary); line-height: 1.6; margin-bottom: 2rem; }
-  .btn-row { display: flex; gap: 12px; }
-  .btn-ans { flex: 1; padding: 14px; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); font-size: 15px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.1s; }
-  .btn-ans:hover { background: var(--color-background-secondary); }
-  .btn-ans:active { transform: scale(0.97); }
-  .btn-ans.sel-yes { background: #E6F1FB; border-color: #378ADD; color: #0C447C; }
-  .btn-ans.sel-no { background: #F1EFE8; border-color: #888780; color: #2C2C2A; }
-  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; }
-  .btn-nav { background: none; border: none; font-size: 13px; color: var(--color-text-tertiary); cursor: pointer; padding: 4px 0; }
-  .btn-nav:hover { color: var(--color-text-secondary); }
-  .btn-submit { flex: 1; padding: 14px; border-radius: var(--border-radius-lg); border: 0.5px solid #378ADD; background: #E6F1FB; font-size: 15px; font-weight: 500; color: #0C447C; cursor: pointer; margin-top: 1.5rem; width: 100%; }
-  .btn-submit:hover { background: #B5D4F4; }
-  .result-section { text-align: center; padding: 1rem 0; }
-  .score-ring { width: 120px; height: 120px; margin: 0 auto 1rem; position: relative; }
-  .score-ring svg { width: 120px; height: 120px; }
-  .score-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 32px; font-weight: 500; color: var(--color-text-primary); }
-  .result-title { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.75rem; }
-  .result-desc { font-size: 15px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 2rem; text-align: left; }
-  .badge { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 99px; margin-bottom: 1rem; }
-  .meter-row { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
-  .meter-label { font-size: 13px; color: var(--color-text-tertiary); width: 72px; text-align: right; }
-  .meter-bg { flex: 1; height: 8px; background: var(--color-border-tertiary); border-radius: 4px; overflow: hidden; }
-  .meter-fill { height: 8px; border-radius: 4px; }
-  .btn-restart { border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); border-radius: var(--border-radius-md); padding: 10px 24px; font-size: 14px; color: var(--color-text-secondary); cursor: pointer; margin-top: 0.5rem; }
-  .btn-restart:hover { background: var(--color-background-secondary); }
-</style>
+* {
+box-sizing: border-box;
+}
 
-<div class="quiz-wrap">
-  <h2 class="sr-only">i銝誨?曉?皜祇?嚗15憿??嚗???憿舐內???隞?摰?/h2>
-  <div id="app"></div>
+body {
+font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+background: linear-gradient(135deg, #020617 0%, #111827 100%);
+color: #f9fafb;
+min-height: 100vh;
+margin: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+
+.app {
+display: flex;
+gap: 24px;
+max-width: 1700px;
+width: 100%;
+align-items: flex-start;
+}
+
+h1 {
+margin: 0 0 8px 0;
+font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.hint {
+font-size: 1rem;
+opacity: 0.9;
+margin-bottom: 16px;
+text-align: center;
+line-height: 1.4;
+}
+
+.wheel-panel {
+display: flex;
+flex-direction: column;
+align-items: center;
+flex: 1;
+}
+
+.wheel-container {
+position: relative;
+width: 400px;
+height: 400px;
+margin-bottom: 20px;
+}
+
+.pointer {
+position: absolute;
+top: -18px;
+left: 50%;
+transform: translateX(-50%);
+width: 0;
+height: 0;
+border-left: 18px solid transparent;
+border-right: 18px solid transparent;
+border-bottom: 28px solid #f97316;
+z-index: 10;
+filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
+}
+
+.wheel {
+width: 100%;
+height: 100%;
+border-radius: 50%;
+background: conic-gradient(
+#fbbf24 0deg 45deg,
+#e5e7eb 45deg 90deg,
+#fbbf24 90deg 135deg,
+#e5e7eb 135deg 180deg,
+#fbbf24 180deg 225deg,
+#e5e7eb 225deg 270deg,
+#fbbf24 270deg 315deg,
+#e5e7eb 315deg 360deg
+);
+border: 8px solid #0f172a;
+position: relative;
+overflow: hidden;
+transition: transform 4.5s cubic-bezier(0.23, 1, 0.32, 1);
+box-shadow:
+0 0 0 6px #111827,
+inset 0 0 40px rgba(0,0,0,0.6),
+0 25px 50px rgba(0,0,0,0.7);
+}
+
+.segment {
+position: absolute;
+width: 52%;
+height: 3px;
+top: 50%;
+left: 50%;
+transform-origin: 0% 50%;
+}
+
+.segment-label {
+position: absolute;
+right: -20px;
+top: -12px;
+width: 36px;
+text-align: center;
+font-size: clamp(10px, 1.8vw, 12px);
+font-weight: 600;
+color: #fefefe;
+transform-origin: 50% 50%;
+text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+.controls {
+display: flex;
+gap: 12px;
+margin-bottom: 8px;
+}
+
+button {
+padding: 12px 24px;
+border-radius: 999px;
+border: none;
+background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+color: #f9fafb;
+cursor: pointer;
+font-size: 16px;
+font-weight: 600;
+box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+transition: all 0.2s ease;
+}
+
+button:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+button:active {
+transform: translateY(0);
+box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+}
+
+button:disabled {
+background: #4b5563;
+cursor: default;
+transform: none;
+box-shadow: none;
+}
+
+.round {
+font-size: 1.1rem;
+opacity: 0.9;
+margin-bottom: 8px;
+min-height: 24px;
+text-align: center;
+font-weight: 500;
+}
+
+.result {
+min-height: 80px;
+font-size: clamp(2.2rem, 8vw, 4.5rem);
+font-weight: 800;
+margin-top: 8px;
+text-align: center;
+line-height: 1.1;
+text-shadow: 0 4px 12px rgba(0,0,0,0.8);
+background: rgba(249, 250, 251, 0.1);
+padding: 16px 24px;
+border-radius: 16px;
+border: 2px solid rgba(249, 250, 251, 0.2);
+}
+
+/* ── 右側名單面板 ── */
+.names-panel {
+width: 280px;
+max-height: 560px;
+display: flex;
+flex-direction: column;
+flex-shrink: 0;
+background: rgba(17, 24, 39, 0.95);
+border-radius: 20px;
+border: 1px solid rgba(31, 41, 55, 0.8);
+box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+overflow: hidden;
+backdrop-filter: blur(10px);
+}
+
+.names-header {
+padding: 12px 16px;
+border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+font-size: 1rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: rgba(11, 17, 32, 0.9);
+font-weight: 600;
+}
+
+.names-list {
+list-style: none;
+margin: 0;
+padding: 8px 0;
+overflow-y: auto;
+flex: 1;
+}
+
+.names-list li {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 8px 16px;
+font-size: 15px;
+border-bottom: 1px solid rgba(15, 23, 42, 0.6);
+background: transparent;
+transition: all 0.2s ease;
+cursor: pointer;
+}
+
+.names-list li:hover {
+background: rgba(59, 130, 246, 0.1);
+}
+
+.names-list li:nth-child(2n) {
+background: rgba(15, 23, 42, 0.4);
+}
+
+.names-list li .no {
+opacity: 0.85;
+width: 50px;
+font-weight: 700;
+}
+
+.names-list li .nm {
+flex: 1;
+padding-left: 4px;
+}
+
+.names-list li.active {
+background: linear-gradient(135deg, #f59e0b, #fbbf24);
+color: #111827;
+font-weight: 700;
+box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+.names-list li.active .no {
+opacity: 1;
+}
+
+.names-footer {
+padding: 8px 16px;
+font-size: 13px;
+opacity: 0.85;
+text-align: right;
+background: rgba(2, 6, 23, 0.9);
+font-style: italic;
+}
+
+/* ── 左側未到名單面板 ── */
+.absent-panel {
+width: 300px;
+flex-shrink: 0;
+background: rgba(17, 24, 39, 0.95);
+border-radius: 20px;
+border: 1px solid rgba(239, 68, 68, 0.35);
+box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+overflow: hidden;
+backdrop-filter: blur(10px);
+}
+
+.absent-header {
+padding: 12px 16px;
+border-bottom: 1px solid rgba(239, 68, 68, 0.3);
+font-size: 1rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: rgba(127, 29, 29, 0.35);
+font-weight: 600;
+color: #fca5a5;
+}
+
+.absent-header .absent-count {
+background: rgba(239, 68, 68, 0.25);
+color: #fca5a5;
+border: 1px solid rgba(239, 68, 68, 0.4);
+border-radius: 999px;
+padding: 2px 10px;
+font-size: 13px;
+font-weight: 700;
+}
+
+.absent-list {
+list-style: none;
+margin: 0;
+padding: 10px 12px;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 4px 8px;
+}
+
+.absent-list li {
+display: flex;
+align-items: center;
+gap: 4px;
+padding: 5px 8px;
+font-size: 13px;
+border-radius: 8px;
+background: rgba(127, 29, 29, 0.15);
+border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.absent-list li:last-child {
+border-bottom: none;
+}
+
+.absent-list li .a-no {
+font-weight: 700;
+color: #fca5a5;
+font-size: 12px;
+flex-shrink: 0;
+}
+
+.absent-list li .a-nm {
+flex: 1;
+color: #fef2f2;
+font-size: 13px;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.absent-list li .a-badge {
+background: rgba(239, 68, 68, 0.2);
+border: 1px solid rgba(239, 68, 68, 0.5);
+color: #f87171;
+border-radius: 999px;
+padding: 1px 5px;
+font-size: 11px;
+font-weight: 700;
+white-space: nowrap;
+flex-shrink: 0;
+}
+
+/* 三次未到：整列亮黃色醒目標示 */
+.absent-list li.warn3 {
+background: rgba(234, 179, 8, 0.18);
+border: 1px solid rgba(234, 179, 8, 0.5);
+}
+
+.absent-list li.warn3 .a-no {
+color: #fde047;
+}
+
+.absent-list li.warn3 .a-nm {
+color: #fef08a;
+font-weight: 700;
+}
+
+.absent-list li.warn3 .a-badge {
+background: rgba(234, 179, 8, 0.35);
+border: 1px solid #facc15;
+color: #fef08a;
+font-weight: 800;
+}
+
+@media (max-width: 1100px) {
+.app {
+flex-direction: column;
+gap: 24px;
+align-items: center;
+}
+.absent-panel, .names-panel {
+width: 100%;
+max-width: 400px;
+}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- 左側：未到名單 -->
+<div class="absent-panel">
+<div class="absent-header">
+        <span>🚨 點名未到累計兩次名單</span>
+        <span class="absent-count">累計 22 人</span>
+        <span>🚨 點名未到累計兩次以上</span>
+    
+</div>
+<ul class="absent-list">
+<li class="warn3"><span class="a-no">001</span><span class="a-nm">詹○翔</span><span class="a-badge">(3)</span></li>
+<li><span class="a-no">007</span><span class="a-nm">林○儀</span><span class="a-badge">(2)</span></li>
+<li class="warn3"><span class="a-no">012</span><span class="a-nm">羅○雁</span><span class="a-badge">(3)</span></li>
+<li class="warn3"><span class="a-no">013</span><span class="a-nm">杜○倢</span><span class="a-badge">(3)</span></li>
+<li class="warn3"><span class="a-no">016</span><span class="a-nm">簡○羚</span><span class="a-badge">(3)</span></li>
+<li class="warn3"><span class="a-no">017</span><span class="a-nm">林○伃</span><span class="a-badge">(3)</span></li>
+<li><span class="a-no">018</span><span class="a-nm">田○妃</span><span class="a-badge">(2)</span></li>
+<li><span class="a-no">021</span><span class="a-nm">林○嵐</span><span class="a-badge">(2)</span></li>
+<li><span class="a-no">025</span><span class="a-nm">李○昇</span><span class="a-badge">(2)</span></li>
+<li class="warn3"><span class="a-no">033</span><span class="a-nm">彭○廷</span><span class="a-badge">(3)</span></li>
+<li><span class="a-no">034</span><span class="a-nm">程○涵</span><span class="a-badge">(2)</span></li>
+<li><span class="a-no">036</span><span class="a-nm">劉○中</span><span class="a-badge">(2)</span></li>
+<li><span class="a-no">041</span><span class="a-nm">程○翔</span><span class="a-badge">(2)</span></li>
+<li><span class="a-no">050</span><span class="a-nm">林○恩</span><span class="a-badge">(2)</span></li>
+<li class="warn3"><span class="a-no">051</span><span class="a-nm">朱○豪</span><span class="a-badge">(3)</span></li>
+<li class="warn3"><span class="a-no">058</span><span class="a-nm">潘○君</span><span class="a-badge">(3)</span></li>
+<li class="warn3"><span class="a-no">059</span><span class="a-nm">吳○珊</span><span class="a-badge">(3)</span></li>
+<li class="warn3"><span class="a-no">060</span><span class="a-nm">黃○杰</span><span class="a-badge">(3)</span></li>
+<li class="warn3"><span class="a-no">061</span><span class="a-nm">廖○晴</span><span class="a-badge">(3)</span></li>
+<li><span class="a-no">065</span><span class="a-nm">王○昕</span><span class="a-badge">(2)</span></li>
+<li><span class="a-no">072</span><span class="a-nm">徐○勝</span><span class="a-badge">(2)</span></li>
+<li class="warn3"><span class="a-no">074</span><span class="a-nm">盧○霖</span><span class="a-badge">(3)</span></li>
+</ul>
+</div>
+
+<!-- 中間：輪盤 -->
+<div class="wheel-panel">
+<h1>🎯 點名輪盤</h1>
+<div class="hint">
+點擊「旋轉」按鈕隨機抽出同學<br>
+<small>右側同步高亮顯示，支援最近 5 次不重複</small>
+</div>
+
+<div class="wheel-container">
+<div class="pointer"></div>
+<div class="wheel" id="wheel"></div>
+</div>
+
+<div class="controls">
+<button id="spinBtn">🎲 旋轉抽取</button>
+<button id="resetBtn">🔄 重置</button>
+</div>
+<div class="round" id="roundInfo"></div>
+<div class="result" id="result">準備抽取...</div>
+</div>
+
+<!-- 右側：出席名單 -->
+<div class="names-panel">
+<div class="names-header">
+<span>📋 1–74 號同學名單</span>
+<span id="countInfo">74 人</span>
+</div>
+<ul class="names-list" id="namesList"></ul>
+<div class="names-footer" id="namesFooter"></div>
+</div>
 </div>
 
 <script>
-const Q = [
-  { text: "?24撠??改?雿?西撠鈭?撠??冽?璈??唾??荔?", yesPoint: true },
-  { text: "雿??箸??璈??冗蝢方?擃董??嚗?, yesPoint: true },
-  { text: "雿??箄撌望???縑隞啁?鈭箏?嚗?, yesPoint: false },
-  { text: "雿遛17甇脫?撌脩???擏??", yesPoint: false },
-  { text: "雿??箏??批?憪餅?閰脣?瘜?嚗?, yesPoint: true },
-  { text: "雿遛16甇脫????恍?蝎暸ㄡ??嚗??嗾???蝞?嚗?, yesPoint: false },
-  { text: "雿??撟湔??虜?慦賢?嗅?嚗?, yesPoint: false },
-  { text: "雿?銝剖飛??摮豢鋆∠車???臬?雿???鈭箸?西?????銝嚗?, yesPoint: true },
-  { text: "雿?銝剖飛??瘥望???臬?質????勗漲嚗?, yesPoint: false },
-  { text: "雿?銝剖飛?????摮豢???撌伐?", yesPoint: false },
-  { text: "雿?血??犖?????刻??Ｗ???霅衣內?臬末銝餅?嚗蒂???見?賣?雿?蝬????荔?", yesPoint: true },
-  { text: "雿?踵祥銝?函?瘣曉?嚗?, yesPoint: true },
-  { text: "雿?行?之暻餃?瘜?嚗?, yesPoint: true },
-  { text: "餈賣?銝????扳?瘝?憿?嚗?, yesPoint: true },
-  { text: "雿?銝剖飛???臬蝬虜?死鋡怠蕭?乩蒂閬箏?撖?嚗?, yesPoint: true },
+const students = [
+"詹○翔","陳○楦","吳○凱","莊○閎","謝○窈","黃○誼","林○儀","李○璇","蔡○希","張○綸",
+"陳○恩","羅○雁","杜○倢","吳○恩","陳○宸","簡○羚","林○伃","田○妃","陳○原","陳○甯",
+"林○嵐","蘇○峯","徐○玉","陳○諺","李○昇","應○林","陳○妤","陳○臻","陳○卉","劉○真",
+"洪○倫","沈○浥","彭○廷","程○涵","陳○均","劉○中","王○彥","蘇○宇","黃○承","林○珊",
+"程○翔","吳○庭","張○晴","莊○萱","張○盈","鄭○暐","孫○志","徐○哿","洪○軒","林○恩",
+"朱○豪","朱○芸","賴○涵","許○珮","簡○心","許○欣","林○羲","潘○君","吳○珊","黃○杰",
+"廖○晴","陳○瑋","杜○倢","林○萱","王○昕","王○學","張○杰","韓○文","程○宥","蔡○安",
+"鄭○涵","徐○勝","林○紘","盧○霖"
 ];
 
-const RESULTS = [
-  { min: 0,  max: 3,  label: "?喟絞銝誨",     fill: "#888780", bg: "#D3D1C7", desc: "雿??暑?孵???潸??蝯曹?隞??摨阡??????Ｗ??Ｖ??蝯梁?靽?隞亙?閬芾澈擃???瘣颯雿???雿??芣撌亙嚗??舐??賜??詨??? },
-  { min: 4,  max: 7,  label: "頝其?隞??皜∪?", fill: "#378ADD", bg: "#B5D4F4", desc: "雿????蝯梯??曆誨?鞈芥??賡?瘣餃?冽雿??曉祕銝?銋???嚗?賭澈???撣嗡??噶?抬?銋?憭勗鈭箄?鈭箔???撖衣?????? },
-  { min: 8,  max: 11, label: "?亥?i銝誨",    fill: "#1D9E75", bg: "#9FE1CB", desc: "雿?閮勗?銵??摨血歇?貊鞎潸?i銝誨??蝧?冽?璈???憭?霅圈????暹?摨佗?銝虫??冽雿憓葉?芸?暑?? },
-  { min: 12, max: 15, label: "?詨?i銝誨",    fill: "#7F77DD", bg: "#CECBF6", desc: "雿?撣詨??i銝誨嚗?批???撟曆??臭??辣隡賂?蝷曄黎慦??臭??冗鈭文??雿??犖?芰???像蝑?撘瑞?隤?嚗????航???唳雿?隞?葆靘?摮斤?? },
-];
+const COUNT = students.length;
+const RECENT_LIMIT = 5;
 
-var answers = new Array(15).fill(null);
-var current = 0;
-var showResult = false;
+const wheel = document.getElementById('wheel');
+const spinBtn = document.getElementById('spinBtn');
+const resetBtn = document.getElementById('resetBtn');
+const result = document.getElementById('result');
+const roundInfo = document.getElementById('roundInfo');
+const namesList = document.getElementById('namesList');
+const countInfo = document.getElementById('countInfo');
+const namesFooter = document.getElementById('namesFooter');
 
-function calcScore() {
-  var s = 0;
-  for (var i = 0; i < 15; i++) {
-    if (answers[i] === null) continue;
-    if (Q[i].yesPoint && answers[i] === 'yes') s++;
-    if (!Q[i].yesPoint && answers[i] === 'no') s++;
-  }
-  return s;
+const anglePer = 360 / COUNT;
+
+for (let i = 0; i < COUNT; i++) {
+const segment = document.createElement('div');
+segment.className = 'segment';
+segment.style.transform = `rotate(${i * anglePer}deg)`;
+
+const label = document.createElement('div');
+label.className = 'segment-label';
+label.textContent = i + 1;
+const hue = (i * 4.8) % 360;
+label.style.color = `hsl(${hue}, 85%, 75%)`;
+
+segment.appendChild(label);
+wheel.appendChild(segment);
 }
 
-function getResult(score) {
-  for (var i = 0; i < RESULTS.length; i++) {
-    if (score >= RESULTS[i].min && score <= RESULTS[i].max) return RESULTS[i];
-  }
-  return RESULTS[3];
+countInfo.textContent = `${COUNT} 人`;
+students.forEach((name, index) => {
+const li = document.createElement('li');
+li.dataset.no = index + 1;
+
+const noSpan = document.createElement('span');
+noSpan.className = 'no';
+noSpan.textContent = String(index + 1).padStart(2, '0') + '號';
+
+const nameSpan = document.createElement('span');
+nameSpan.className = 'nm';
+nameSpan.textContent = name;
+
+li.appendChild(noSpan);
+li.appendChild(nameSpan);
+namesList.appendChild(li);
+});
+namesFooter.textContent = '最近5次不重複抽取';
+
+let currentRotation = 0;
+let isSpinning = false;
+let round = 0;
+const recent = [];
+
+function drawNonRepeating() {
+let n;
+let tries = 0;
+do {
+n = Math.floor(Math.random() * COUNT) + 1;
+tries++;
+if (tries > 50) break;
+} while (recent.includes(n));
+
+recent.push(n);
+if (recent.length > RECENT_LIMIT) recent.shift();
+return n;
 }
 
-function render() {
-  var app = document.getElementById('app');
-  if (showResult) {
-    renderResult(app);
-  } else {
-    renderQuestion(app);
-  }
+function highlightName(no) {
+namesList.querySelectorAll('li').forEach(li => {
+li.classList.toggle('active', Number(li.dataset.no) === no);
+});
 }
 
-function renderQuestion(app) {
-  var answered = answers.filter(function(a){ return a !== null; }).length;
-  var pct = (answered / 15) * 100;
-  var q = Q[current];
-  var selYes = answers[current] === 'yes' ? 'sel-yes' : '';
-  var selNo  = answers[current] === 'no'  ? 'sel-no'  : '';
-  var isLast = current === 14;
-  var canSubmit = isLast && answers[current] !== null;
+function spin() {
+if (isSpinning) return;
 
-  var submitBtn = canSubmit
-    ? '<button class="btn-submit" onclick="submitQuiz()">?亦?蝯?</button>'
-    : '';
+isSpinning = true;
+spinBtn.disabled = true;
+spinBtn.textContent = '轉動中…';
+result.textContent = '🎲 轉動中…';
+result.style.background = 'rgba(249, 250, 251, 0.05)';
 
-  var nextBtn = (!isLast && answers[current] !== null)
-    ? '<button class="btn-nav" onclick="go(' + (current+1) + ')">銝?憿???/button>'
-    : '<span></span>';
+const chosen = drawNonRepeating();
+const chosenName = students[chosen - 1];
 
-  app.innerHTML =
-    '<div class="progress-bar-bg"><div class="progress-bar-fill" style="width:' + pct + '%"></div></div>' +
-    '<p class="q-num">蝚?' + (current+1) + ' 憿???15 憿?/p>' +
-    '<p class="q-text">' + q.text + '</p>' +
-    '<div class="btn-row">' +
-      '<button class="btn-ans ' + selYes + '" onclick="pick(\'yes\')">??/button>' +
-      '<button class="btn-ans ' + selNo  + '" onclick="pick(\'no\')">??/button>' +
-    '</div>' +
-    submitBtn +
-    '<div class="nav-row">' +
-      (current > 0 ? '<button class="btn-nav" onclick="go(' + (current-1) + ')">??銝?憿?/button>' : '<span></span>') +
-      nextBtn +
-    '</div>';
+const extraTurns = 5 + Math.floor(Math.random() * 6);
+const targetDeg = extraTurns * 360 + (90 - anglePer * (chosen - 1));
+
+currentRotation = targetDeg;
+wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+setTimeout(() => {
+isSpinning = false;
+spinBtn.disabled = false;
+spinBtn.textContent = '🎲 旋轉抽取';
+round++;
+roundInfo.textContent = `第 ${round} 輪`;
+result.innerHTML = `<strong>${chosen}號</strong><br>${chosenName}`;
+result.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2))';
+highlightName(chosen);
+
+const activeLi = namesList.querySelector(`li[data-no="${chosen}"]`);
+if (activeLi) activeLi.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}, 4600);
 }
 
-function pick(val) {
-  answers[current] = val;
-  if (current < 14) {
-    current++;
-    render();
-  } else {
-    render();
-  }
+function resetAll() {
+if (isSpinning) return;
+currentRotation = 0;
+wheel.style.transform = 'rotate(0deg)';
+round = 0;
+recent.length = 0;
+roundInfo.textContent = '';
+result.innerHTML = '準備抽取...';
+result.style.background = 'rgba(249, 250, 251, 0.1)';
+highlightName(-1);
+spinBtn.textContent = '🎲 旋轉抽取';
 }
 
-function go(idx) {
-  current = idx;
-  render();
-}
+spinBtn.addEventListener('click', spin);
+resetBtn.addEventListener('click', resetAll);
 
-function submitQuiz() {
-  showResult = true;
-  render();
-}
-
-function renderResult(app) {
-  var score = calcScore();
-  var r = getResult(score);
-  var circumference = 2 * Math.PI * 50;
-  var dash = (score / 15) * circumference;
-  var offset = circumference * 0.25;
-
-  var meters = RESULTS.map(function(res) {
-    var active = score >= res.min && score <= res.max;
-    var w = active ? Math.round(((score - res.min) / (res.max - res.min + 1)) * 100) : (score > res.max ? 100 : 5);
-    return '<div class="meter-row">' +
-      '<span class="meter-label">' + res.label + '</span>' +
-      '<div class="meter-bg"><div class="meter-fill" style="width:' + w + '%;background:' + res.fill + ';"></div></div>' +
-      '<span style="font-size:12px;color:var(--color-text-tertiary);">' + res.min + '?? + res.max + '</span>' +
-    '</div>';
-  }).join('');
-
-  app.innerHTML =
-    '<div class="result-section">' +
-      '<div class="score-ring">' +
-        '<svg viewBox="0 0 120 120">' +
-          '<circle cx="60" cy="60" r="50" fill="none" stroke="var(--color-border-tertiary)" stroke-width="8"/>' +
-          '<circle cx="60" cy="60" r="50" fill="none" stroke="' + r.fill + '" stroke-width="8" ' +
-            'stroke-dasharray="' + dash + ' ' + circumference + '" ' +
-            'stroke-dashoffset="' + offset + '" stroke-linecap="round"/>' +
-        '</svg>' +
-        '<div class="score-num">' + score + '</div>' +
-      '</div>' +
-      '<p style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:1rem;">皛踹? 15 ??/p>' +
-      '<div class="badge" style="background:' + r.bg + ';color:' + r.fill + ';">' + r.label + '</div>' +
-      '<p class="result-title">' + r.label + '</p>' +
-      '<p class="result-desc">' + r.desc + '</p>' +
-      '<div style="text-align:left;margin-bottom:2rem;">' +
-        '<p style="font-size:13px;color:var(--color-text-tertiary);margin-bottom:1rem;">??隞?????/p>' +
-        meters +
-      '</div>' +
-      '<button class="btn-restart" onclick="restart()">?皜祇?</button>' +
-    '</div>';
-}
-
-function restart() {
-  answers = new Array(15).fill(null);
-  current = 0;
-  showResult = false;
-  render();
-}
-
-render();
+console.log('金銀輪盤載入完成，共', COUNT, '人');
 </script>
+</body>
+</html>
