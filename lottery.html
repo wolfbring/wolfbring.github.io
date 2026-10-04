@@ -8,7 +8,7 @@
 * {
 box-sizing: border-box;
 }
-
+ 
 body {
 font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 background: linear-gradient(135deg, #020617 0%, #111827 100%);
@@ -20,7 +20,7 @@ align-items: center;
 justify-content: center;
 padding: 20px;
 }
-
+ 
 .app {
 display: flex;
 gap: 24px;
@@ -28,12 +28,12 @@ max-width: 1700px;
 width: 100%;
 align-items: flex-start;
 }
-
+ 
 h1 {
 margin: 0 0 8px 0;
 font-size: clamp(2rem, 5vw, 3rem);
 }
-
+ 
 .hint {
 font-size: 1rem;
 opacity: 0.9;
@@ -41,21 +41,21 @@ margin-bottom: 16px;
 text-align: center;
 line-height: 1.4;
 }
-
+ 
 .wheel-panel {
 display: flex;
 flex-direction: column;
 align-items: center;
 flex: 1;
 }
-
+ 
 .wheel-container {
 position: relative;
 width: 400px;
 height: 400px;
 margin-bottom: 20px;
 }
-
+ 
 .pointer {
 position: absolute;
 top: -18px;
@@ -69,7 +69,7 @@ border-bottom: 28px solid #f97316;
 z-index: 10;
 filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
 }
-
+ 
 .wheel {
 width: 100%;
 height: 100%;
@@ -93,7 +93,7 @@ box-shadow:
 inset 0 0 40px rgba(0,0,0,0.6),
 0 25px 50px rgba(0,0,0,0.7);
 }
-
+ 
 .segment {
 position: absolute;
 width: 52%;
@@ -102,7 +102,7 @@ top: 50%;
 left: 50%;
 transform-origin: 0% 50%;
 }
-
+ 
 .segment-label {
 position: absolute;
 right: -20px;
@@ -115,13 +115,13 @@ color: #fefefe;
 transform-origin: 50% 50%;
 text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
-
+ 
 .controls {
 display: flex;
 gap: 12px;
 margin-bottom: 8px;
 }
-
+ 
 button {
 padding: 12px 24px;
 border-radius: 999px;
@@ -134,24 +134,24 @@ font-weight: 600;
 box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
 transition: all 0.2s ease;
 }
-
+ 
 button:hover {
 transform: translateY(-2px);
 box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
 }
-
+ 
 button:active {
 transform: translateY(0);
 box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
 }
-
+ 
 button:disabled {
 background: #4b5563;
 cursor: default;
 transform: none;
 box-shadow: none;
 }
-
+ 
 .round {
 font-size: 1.1rem;
 opacity: 0.9;
@@ -160,7 +160,7 @@ min-height: 24px;
 text-align: center;
 font-weight: 500;
 }
-
+ 
 .result {
 min-height: 80px;
 font-size: clamp(2.2rem, 8vw, 4.5rem);
@@ -174,7 +174,7 @@ padding: 16px 24px;
 border-radius: 16px;
 border: 2px solid rgba(249, 250, 251, 0.2);
 }
-
+ 
 /* ── 右側名單面板 ── */
 .names-panel {
 width: 280px;
@@ -189,7 +189,7 @@ box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 overflow: hidden;
 backdrop-filter: blur(10px);
 }
-
+ 
 .names-header {
 padding: 12px 16px;
 border-bottom: 1px solid rgba(31, 41, 55, 0.8);
@@ -200,7 +200,7 @@ align-items: center;
 background: rgba(11, 17, 32, 0.9);
 font-weight: 600;
 }
-
+ 
 .names-list {
 list-style: none;
 margin: 0;
@@ -208,7 +208,7 @@ padding: 8px 0;
 overflow-y: auto;
 flex: 1;
 }
-
+ 
 .names-list li {
 display: flex;
 justify-content: space-between;
@@ -220,37 +220,37 @@ background: transparent;
 transition: all 0.2s ease;
 cursor: pointer;
 }
-
+ 
 .names-list li:hover {
 background: rgba(59, 130, 246, 0.1);
 }
-
+ 
 .names-list li:nth-child(2n) {
 background: rgba(15, 23, 42, 0.4);
 }
-
+ 
 .names-list li .no {
 opacity: 0.85;
 width: 50px;
 font-weight: 700;
 }
-
+ 
 .names-list li .nm {
 flex: 1;
 padding-left: 4px;
 }
-
+ 
 .names-list li.active {
 background: linear-gradient(135deg, #f59e0b, #fbbf24);
 color: #111827;
 font-weight: 700;
 box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
 }
-
+ 
 .names-list li.active .no {
 opacity: 1;
 }
-
+ 
 .names-footer {
 padding: 8px 16px;
 font-size: 13px;
@@ -259,7 +259,7 @@ text-align: right;
 background: rgba(2, 6, 23, 0.9);
 font-style: italic;
 }
-
+ 
 /* ── 左側未到名單面板 ── */
 .absent-panel {
 width: 300px;
@@ -271,7 +271,7 @@ box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 overflow: hidden;
 backdrop-filter: blur(10px);
 }
-
+ 
 .absent-header {
 padding: 12px 16px;
 border-bottom: 1px solid rgba(239, 68, 68, 0.3);
@@ -283,7 +283,7 @@ background: rgba(127, 29, 29, 0.35);
 font-weight: 600;
 color: #fca5a5;
 }
-
+ 
 .absent-header .absent-count {
 background: rgba(239, 68, 68, 0.25);
 color: #fca5a5;
@@ -293,7 +293,7 @@ padding: 2px 10px;
 font-size: 13px;
 font-weight: 700;
 }
-
+ 
 .absent-list {
 list-style: none;
 margin: 0;
@@ -302,7 +302,7 @@ display: grid;
 grid-template-columns: 1fr 1fr;
 gap: 4px 8px;
 }
-
+ 
 .absent-list li {
 display: flex;
 align-items: center;
@@ -313,18 +313,18 @@ border-radius: 8px;
 background: rgba(127, 29, 29, 0.15);
 border: 1px solid rgba(239, 68, 68, 0.15);
 }
-
+ 
 .absent-list li:last-child {
 border-bottom: none;
 }
-
+ 
 .absent-list li .a-no {
 font-weight: 700;
 color: #fca5a5;
 font-size: 12px;
 flex-shrink: 0;
 }
-
+ 
 .absent-list li .a-nm {
 flex: 1;
 color: #fef2f2;
@@ -333,7 +333,7 @@ white-space: nowrap;
 overflow: hidden;
 text-overflow: ellipsis;
 }
-
+ 
 .absent-list li .a-badge {
 background: rgba(239, 68, 68, 0.2);
 border: 1px solid rgba(239, 68, 68, 0.5);
@@ -345,29 +345,29 @@ font-weight: 700;
 white-space: nowrap;
 flex-shrink: 0;
 }
-
+ 
 /* 三次未到：整列亮黃色醒目標示 */
 .absent-list li.warn3 {
 background: rgba(234, 179, 8, 0.18);
 border: 1px solid rgba(234, 179, 8, 0.5);
 }
-
+ 
 .absent-list li.warn3 .a-no {
 color: #fde047;
 }
-
+ 
 .absent-list li.warn3 .a-nm {
 color: #fef08a;
 font-weight: 700;
 }
-
+ 
 .absent-list li.warn3 .a-badge {
 background: rgba(234, 179, 8, 0.35);
 border: 1px solid #facc15;
 color: #fef08a;
 font-weight: 800;
 }
-
+ 
 @media (max-width: 1100px) {
 .app {
 flex-direction: column;
@@ -392,10 +392,24 @@ max-width: 400px;
     
 </div>
 <ul class="absent-list">
-
+<li class="warn3"><span class="a-no">001</span><span class="a-nm">詹○翔</span><span class="a-badge">(5)</span></li>
+<li><span class="a-no">002</span><span class="a-nm">陳○楦</span><span class="a-badge">(3)</span></li>
+<li><span class="a-no">013</span><span class="a-nm">杜○倢</span><span class="a-badge">(3)</span></li>
+ 
+<li><span class="a-no">024</span><span class="a-nm">陳○諺</span><span class="a-badge">(3)</span></li>
+<li><span class="a-no">027</span><span class="a-nm">陳○妤</span><span class="a-badge">(3)</span></li>
+   
+<li class="warn3"><span class="a-no">033</span><span class="a-nm">彭○廷</span><span class="a-badge">(4)</span></li>
+<li class="warn3"><span class="a-no">034</span><span class="a-nm">程○涵</span><span class="a-badge">(4)</span></li>
+   
+<li class="warn3"><span class="a-no">041</span><span class="a-nm">程○翔</span><span class="a-badge">(5)</span></li>
+<li class="warn3"><span class="a-no">058</span><span class="a-nm">潘○君</span><span class="a-badge">(5)</span></li>
+ 
+<li><span class="a-no">063</span><span class="a-nm">杜○倢</span><span class="a-badge">(3)</span></li>
+<li><span class="a-no">064</span><span class="a-nm">林○萱</span><span class="a-badge">(3)</span></li>
 </ul>
 </div>
-
+ 
 <!-- 中間：輪盤 -->
 <div class="wheel-panel">
 <h1>🎯 點名輪盤</h1>
@@ -403,12 +417,12 @@ max-width: 400px;
 點擊「旋轉」按鈕隨機抽出同學<br>
 <small>右側同步高亮顯示，支援最近 5 次不重複</small>
 </div>
-
+ 
 <div class="wheel-container">
 <div class="pointer"></div>
 <div class="wheel" id="wheel"></div>
 </div>
-
+ 
 <div class="controls">
 <button id="spinBtn">🎲 旋轉抽取</button>
 <button id="resetBtn">🔄 重置</button>
@@ -416,33 +430,33 @@ max-width: 400px;
 <div class="round" id="roundInfo"></div>
 <div class="result" id="result">準備抽取...</div>
 </div>
-
+ 
 <!-- 右側：出席名單 -->
 <div class="names-panel">
 <div class="names-header">
-<span>📋 1–78 號同學名單</span>
+<span>📋 1–74 號同學名單</span>
 <span id="countInfo">74 人</span>
 </div>
 <ul class="names-list" id="namesList"></ul>
 <div class="names-footer" id="namesFooter"></div>
 </div>
 </div>
-
+ 
 <script>
 const students = [
-"林○達","○○○","林○彤","余○凌","梁○綸","林○岑","何○軒","林○崴","陳○懷","蘇○漩",
-"阮○勇","洪○婕","潘○寧","朱○芸","王○渝","許○鴻","吳○芮","謝○樺","宋○祐","邱○綺",
-"胡○如","陳○予","吳○翰","林○晏","陳○茵","○○○","高○均","王○全","林○芸","鄭○穎",
-"王○安","○○○","陳○毅","高○絜","饒○馨","黃○銘","莊○文","李○安","吳○詩","黃○禎",
-"歐○○榛","李○庭","汪○諼","張○崴","林○謙","蔡○呈","林○愷","張○慈","○○○","陳○晴",
-"溫○媗","翁○瑄","吳○揚","盧○潔","徐○妤","林○廷","李○綾","王○鈞","江○佑","張○鈞",
-"曾○庭","黃○琪","邱○倫","張○辰","李○瑀","曾○芳","劉○均","川○泰","廖○荏","林○任",
-"黃○媛","林○妤","張○○凡","黃○潔","陳○彥","吳○臻","徐○婷","應○穎"
+"林○廷","林○達","林○彤","余○凌","梁○綸","李○綾","林○岑","何○軒","林○崴","王○鈞",
+"江○佑","張○鈞","曾○庭","黃○琪","陳○懷","邱○倫","蘇○漩","張○辰","李○瑀","阮○勇",
+"曾○芳","洪○婕","潘○寧","王○渝","蔡○霆","劉○均","黃○泰","廖○荏","許○鴻","吳○芮",
+"謝○樺","宋○祐","邱○綺","胡○如","林○任","陳○予","吳○翰","林○晏","許○達","黃○媛",
+"高○均","林○妤","王○全","張○○凡","林○芸","鄭○穎","王○安","黃○潔","陳○毅","高○絜",
+"饒○馨","黃○銘","莊○文","李○安","吳○詩","陳○彥","黃○禎","歐○○榛","簡○任","李○庭",
+"汪○諼","張○崴","林○謙","蔡○呈","林○愷","吳○臻","張○慈","陳○晴","徐○婷","溫○媗",
+"翁○瑄","吳○揚","盧○潔","徐○妤"
 ];
-
+ 
 const COUNT = students.length;
 const RECENT_LIMIT = 5;
-
+ 
 const wheel = document.getElementById('wheel');
 const spinBtn = document.getElementById('spinBtn');
 const resetBtn = document.getElementById('resetBtn');
@@ -451,48 +465,48 @@ const roundInfo = document.getElementById('roundInfo');
 const namesList = document.getElementById('namesList');
 const countInfo = document.getElementById('countInfo');
 const namesFooter = document.getElementById('namesFooter');
-
+ 
 const anglePer = 360 / COUNT;
-
+ 
 for (let i = 0; i < COUNT; i++) {
 const segment = document.createElement('div');
 segment.className = 'segment';
 segment.style.transform = `rotate(${i * anglePer}deg)`;
-
+ 
 const label = document.createElement('div');
 label.className = 'segment-label';
 label.textContent = i + 1;
 const hue = (i * 4.8) % 360;
 label.style.color = `hsl(${hue}, 85%, 75%)`;
-
+ 
 segment.appendChild(label);
 wheel.appendChild(segment);
 }
-
+ 
 countInfo.textContent = `${COUNT} 人`;
 students.forEach((name, index) => {
 const li = document.createElement('li');
 li.dataset.no = index + 1;
-
+ 
 const noSpan = document.createElement('span');
 noSpan.className = 'no';
 noSpan.textContent = String(index + 1).padStart(2, '0') + '號';
-
+ 
 const nameSpan = document.createElement('span');
 nameSpan.className = 'nm';
 nameSpan.textContent = name;
-
+ 
 li.appendChild(noSpan);
 li.appendChild(nameSpan);
 namesList.appendChild(li);
 });
 namesFooter.textContent = '最近5次不重複抽取';
-
+ 
 let currentRotation = 0;
 let isSpinning = false;
 let round = 0;
 const recent = [];
-
+ 
 function drawNonRepeating() {
 let n;
 let tries = 0;
@@ -501,36 +515,36 @@ n = Math.floor(Math.random() * COUNT) + 1;
 tries++;
 if (tries > 50) break;
 } while (recent.includes(n));
-
+ 
 recent.push(n);
 if (recent.length > RECENT_LIMIT) recent.shift();
 return n;
 }
-
+ 
 function highlightName(no) {
 namesList.querySelectorAll('li').forEach(li => {
 li.classList.toggle('active', Number(li.dataset.no) === no);
 });
 }
-
+ 
 function spin() {
 if (isSpinning) return;
-
+ 
 isSpinning = true;
 spinBtn.disabled = true;
 spinBtn.textContent = '轉動中…';
 result.textContent = '🎲 轉動中…';
 result.style.background = 'rgba(249, 250, 251, 0.05)';
-
+ 
 const chosen = drawNonRepeating();
 const chosenName = students[chosen - 1];
-
+ 
 const extraTurns = 5 + Math.floor(Math.random() * 6);
 const targetDeg = extraTurns * 360 + (90 - anglePer * (chosen - 1));
-
+ 
 currentRotation = targetDeg;
 wheel.style.transform = `rotate(${currentRotation}deg)`;
-
+ 
 setTimeout(() => {
 isSpinning = false;
 spinBtn.disabled = false;
@@ -540,12 +554,12 @@ roundInfo.textContent = `第 ${round} 輪`;
 result.innerHTML = `<strong>${chosen}號</strong><br>${chosenName}`;
 result.style.background = 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 191, 36, 0.2))';
 highlightName(chosen);
-
+ 
 const activeLi = namesList.querySelector(`li[data-no="${chosen}"]`);
 if (activeLi) activeLi.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }, 3100);
 }
-
+ 
 function resetAll() {
 if (isSpinning) return;
 currentRotation = 0;
@@ -558,10 +572,10 @@ result.style.background = 'rgba(249, 250, 251, 0.1)';
 highlightName(-1);
 spinBtn.textContent = '🎲 旋轉抽取';
 }
-
+ 
 spinBtn.addEventListener('click', spin);
 resetBtn.addEventListener('click', resetAll);
-
+ 
 console.log('金銀輪盤載入完成，共', COUNT, '人');
 </script>
 </body>
